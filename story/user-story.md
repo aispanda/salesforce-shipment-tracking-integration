@@ -2,7 +2,7 @@
 
 **Migration guide:** [DELIVERY.md](https://github.com/aispanda/Reusable-Delivery/blob/d486dcf684f12fd911c06d2ec2b680d66a4aac3e/DELIVERY.md), commit `d486dcf684f12fd911c06d2ec2b680d66a4aac3e`, route MIGRATE. Migration remains incomplete; see [migration record](../MIGRATION.md).
 
-**Revision:** 0.2, requirements draft. **Status:** documentation in progress; implementation, acceptance and independent verification NOT RUN. **Accountable human:** Pending. **Source template:** AI delivery story Markdown v1.3 and Field Guide v1 with operational addition v1.1; project-specific links and identifiers are retained outside Git in ignored local context. Access to the original online template must be verified by the project coordinator. **Origin:** originating project conversation and current ClickUp story, referenced in local context.
+**Revision:** 0.2, requirements draft. **Status:** documentation in progress; implementation, acceptance and independent verification NOT RUN. **Accountable human:** Pending. **Source template:** AI delivery story Markdown v1.3 and Field Guide v1 with operational addition v1.1; project-specific links and identifiers remain outside Git; an approved retrievable restricted index and access owner are Pending. Access to the original online template must be verified by the project coordinator. **Origin:** originating project conversation and current ClickUp story, referenced in local context.
 
 ## Current state and immediate next action
 
@@ -40,7 +40,7 @@ The proposed design is documented in [technical design](../research/technical-de
 | ID | State | Executor / output | Dependencies |
 |---|---|---|---|
 | S-01 | Complete | LLM: Codex desktop; actual model unknown. Reconcile source and sanitized story/design. | Source story and design accessible. |
-| S-02 | Complete (prior draft branch only; new repository publication Pending) | LLM: Codex desktop, planned GPT-6 Astra medium; actual model recorded at execution. Publish sanitized documentation in reviewable branch. | S-01, content and secret review, repository access. |
+| S-02 | Complete (prior draft branch only; new repository initial documentation published and verified; full migration Pending) | LLM: Codex desktop, planned GPT-6 Astra medium; actual model recorded at execution. Publish sanitized documentation in reviewable branch. | S-01, content and secret review, repository access. |
 | S-03 | Pending | AI: Jev, exact model version recorded at execution. Recheck changed story evidence. | Current version and permission to transmit. |
 | S-04 | Pending | Human: integration owner Pending; LLM implementer planned GPT-6 Astra medium; deterministic workflow/tool/version Pending. Establish contracts and implement bounded jobs. | Source and carrier interfaces, sandbox, authorized credentials. |
 | S-05 | Pending | Automation: selected test runner/version Pending with accountable operator Pending. Run synthetic failure and access tests. | S-04 and fixtures. |
@@ -56,7 +56,7 @@ Earlier Jev 1.14.0 reviewed selected text from revision 0.1; it did not inspect 
 
 ## Impact, authority and recovery
 
-User authorized sanitized documentation in the selected private repository and ongoing story maintenance. No Salesforce configuration, production deployment, actual shipment or customer communication is implied. Inspect branch state and sensitive-data scan before writing. If an operation is uncertain, read the remote state before retrying. Never commit credentials, client names, org URLs or real records; ignored local files must remain outside tracked history.
+User authorized sanitized documentation in the dedicated repository and ongoing story maintenance; public visibility was requested and GitHub identity verification is pending. No Salesforce configuration, production deployment, actual shipment or customer communication is implied. Inspect branch state and sensitive-data scan before writing. If an operation is uncertain, read the remote state before retrying. Never commit credentials, client names, org URLs or real records; ignored local files must remain outside tracked history.
 
 ## Blockers and handoff
 
