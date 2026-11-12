@@ -4,13 +4,21 @@ Guide upgrade: original `d486dcf684f12fd911c06d2ec2b680d66a4aac3e` → `4d015583
 
 This local package is derived from the prior sanitized draft. The dedicated repository was created after the user confirmed the separate repository request; public visibility was authorized and verified on GitHub. Publication and readback are recorded separately; do not infer completion from repository creation. The existing draft PR and its sources remain unchanged. ClickUp synchronization is pending access-controlled capture of its current full description, and refresh/reconciliation before replacement. Previous attachments remain historical. An ignored local file is not itself approved restricted storage. Access-controlled storage owner and retrieval procedure: Pending.
 
+## Current guide upgrade
+
+The current story draft uses the MIGRATE guide at `9d32dccc738cc544481a6da257c13d438115f122`, upgrading from `6013aedacbc1ee7c3aaee24459152ee5ff381eef`. It adds the platform-access gate and role-dependent evidence requirements. Prior evidence and task IDs remain intact. Current ClickUp writeback is deferred; source preservation, independent full-source review and approved restricted retrieval remain Pending.
+
 ## QA guide upgrade
 
 The story now uses [migrate/DELIVERY.md](https://github.com/aispanda/Reusable-Delivery/blob/6013aedacbc1ee7c3aaee24459152ee5ff381eef/migrate/DELIVERY.md) at `6013aedacbc1ee7c3aaee24459152ee5ff381eef`. The previous pin `4d0155830d0adf0cc214a466dbfa7fb22af1a096` and its execution history are retained above. The new guide places the QA plan in the bounded checklist and separates deterministic execution, independent review and human decisions. The shipment application adds S-04c.1 and S-05a–c. S-05a/b carry local and CI evidence for the offline subset. S-05c, S-06 and S-12/13 remain open. All eight acceptance criteria retain their wording and live verification status. Restricted retrieval, source reconciliation and ClickUp cutover remain Pending.
 
-## Criteria comparison and reconciliation needed
+## Current reconciliation — 12 November 2026
 
-The source ClickUp story contains AC-01–07, plus proposed AC-08, all NOT RUN. The earlier sanitized draft retained IDs and intended scope but was not a verbatim copy. In that earlier draft, AC-01 abbreviated the specified external field name, type and uniqueness constraints; AC-04 omitted the one-query/four-update example; AC-05 summarized record-level error fields and alert options. The local migration draft now restores the wording captured from ClickUp for AC-01–07 and the proposed AC-08. Independent comparison with the full restricted source, including intervening edits, is still required before migration can be considered complete. Proposed AC-08 remains proposed; no criterion has been waived. The five-request budget remains unresolved and unproven.
+The current source description was independently read; AC-04–07 match the shipment story, while AC-01–03 were revised after the user's explicit Salesforce-first/no-ERP POC direction. ERP dispatch is deferred. Original AC-01 also required `External_Tracking_Id__c`, Text(255), unique and case-insensitive: its applicability to existing Salesforce-sourced records remains Pending an owner decision, and its constraints are retained for the later source-import design; no waiver is inferred. AC-08 began as a proposal and was expanded under the user's reuse instruction. Full attachment and source-history comparison remains Pending. The old statements below describe the historical pre-clarification draft.
+
+## Historical criteria comparison and reconciliation needed
+
+The source ClickUp story contains AC-01–07, plus proposed AC-08, all NOT RUN. The earlier sanitized draft retained IDs and intended scope but was not a verbatim copy. In that earlier draft, AC-01 abbreviated the specified external field name, type and uniqueness constraints; AC-04 omitted the one-query/four-update example; AC-05 summarized record-level error fields and alert options. That earlier migration draft restored the wording then captured from ClickUp for AC-01–07 and the proposed AC-08; later authorized revisions changed AC-01–03. Independent comparison with the full restricted source, including intervening edits, is still required before migration can be considered complete. Proposed AC-08 remains proposed; no criterion has been waived. The five-request budget remains unresolved and unproven.
 
 ## Retained scope and history
 
@@ -29,7 +37,7 @@ This file is a working migration record; it does not claim migration completion,
 
 | Source or concern | Destination | Preservation status |
 |---|---|---|
-| Existing task description and source story | [Story](story/user-story.md) | IDs AC-01–07 restored from captured task wording; AC-08 proposed. Full independent comparison and intervening edits Pending. Original remains in ClickUp. |
+| Existing task description and source story | [Story](story/user-story.md) | Stable IDs AC-01–07 retained; AC-04–07 match the current description. AC-01–03 changed under later user direction, with the original external-ID constraints still Pending disposition; AC-08 was proposed and later expanded. Full attachment and source-history comparison remains Pending. Original remains in ClickUp. |
 | Backlog and technical design | [Technical design](research/technical-design.md), [plan](docs/implementation-plan.md) | Sanitized draft retained; complete source-by-source comparison Pending. |
 | Research and component discovery | [Research notes](research/design-notes.md) | Sanitized synthesis; primary source references and org-specific observations require verification and restricted provenance. |
 | Test plans and earlier review | [Verification matrix](research/verification-matrix.md), story review section | Full acceptance tests NOT RUN. The story records offline pilot verification separately. The focused review of the sanitized revision is recorded in the story; review of later material changes remains Pending as applicable. Raw reports remain in original sources. |
