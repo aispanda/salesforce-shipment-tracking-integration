@@ -1,0 +1,13 @@
+# Shipment tracking — local POC core
+
+This is a synthetic development starting point, not a working ERP, carrier or Salesforce integration. No network jobs, scheduler, Salesforce updates, storefront or alerts are included. Do not use real shipment data in this local prototype.
+
+Requires Python 3.11 or later; uses only the Python standard library. From this directory:
+
+```sh
+python3 -m unittest discover -s tests -v
+```
+
+The prototype provides source-scoped stable keys, a local SQLite work ledger, collection chunking and conservative ordering of already-normalized carrier events. The sample event statuses are illustrative, not approved carrier mappings. SQLite here is a single-host POC storage choice; concurrency, retention, encryption and production suitability have not been established.
+
+Before a real integration can run, identify the existing middleware and ERP interface, verify Salesforce metadata and access, establish carrier contracts and mappings, choose recovery and alert policies, and validate buyer isolation. The five-request goal is unverified: chunking does not account for reads, authentication, pagination or retries. No acceptance criterion is claimed as passed.
