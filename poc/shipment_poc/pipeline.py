@@ -1,5 +1,6 @@
 """Offline source adapter experiment; this module performs no writes to external systems."""
-from typing import Iterable, Mapping, Protocol
+from collections.abc import Mapping
+from typing import Iterable, Protocol
 from shipment_poc.core import package_key
 
 
@@ -12,7 +13,7 @@ class PagedSourceAdapter(Protocol):
 
 
 def _validate_record(record):
-    if (not isinstance(record, dict) or set(record) != {'package_id', 'revision', 'payload'}
+    if (not isinstance(record, Mapping) or set(record) != {'package_id', 'revision', 'payload'}
             or not isinstance(record['package_id'], str) or not record['package_id'].strip()
             or not isinstance(record['revision'], str) or not record['revision'].strip()
             or not isinstance(record['payload'], dict)):

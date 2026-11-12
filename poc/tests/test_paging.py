@@ -1,4 +1,5 @@
 import tempfile
+import sqlite3
 import unittest
 from pathlib import Path
 
@@ -21,6 +22,44 @@ def item(identifier, revision='1', value=None):
 
 
 class PagingTest(unittest.TestCase):
+    def test_existing_checkpoint_can_resume_after_upgrade(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'state.db'
+            with sqlite3.connect(path) as db:
+                db.execute('CREATE TABLE checkpoints (source TEXT PRIMARY KEY, cursor TEXT, complete INTEGER NOT NULL DEFAULT 0)')
+                db.execute("INSERT INTO checkpoints VALUES ('one', 'old-cursor', 0)")
+            ledger = Ledger(path)
+            try:
+                self.assertTrue(stage_pages('one', Pages({'old-cursor': ([item('a')], None)}), ledger))
+                self.assertEqual(len(ledger.pending()), 1)
+            finally:
+                ledger.close()
+
+    def test_cursor_cycle_across_reopened_bounded_runs_is_rejected_atomically(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'state.db'
+            ledger = Ledger(path)
+            try:
+                self.assertFalse(stage_pages('one', Pages({None: ([item('a')], 'a')}), ledger, max_pages=1))
+            finally:
+                ledger.close()
+            ledger = Ledger(path)
+            try:
+                self.assertFalse(stage_pages('one', Pages({'a': ([item('b')], 'b')}), ledger, max_pages=1))
+            finally:
+                ledger.close()
+            ledger = Ledger(path)
+            try:
+                before = ledger.pending()
+                with self.assertRaises(ValueError):
+                    stage_pages('one', Pages({'b': ([item('c')], 'a')}), ledger, max_pages=1)
+                self.assertEqual(ledger.checkpoint('one'), ('b', False))
+                self.assertEqual(ledger.pending(), before)
+                self.assertTrue(stage_pages('one', Pages({'b': ([item('c')], None)}), ledger, max_pages=1))
+                self.assertEqual(len(ledger.pending()), 3)
+            finally:
+                ledger.close()
+
     def test_resumes_from_committed_checkpoint_after_restart(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'state.db'
@@ -73,11 +112,12 @@ class PagingTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             ledger = Ledger(Path(directory) / 'state.db')
             ledger.stage(package_key('one', 'synthetic', 'existing'), '1', {'value': 'old'})
-            source = Pages({None: ([item('new'), item('existing', value='changed')], None)})
+            source = Pages({None: ([item('new'), item('existing', value='changed')], 'next')})
             with self.assertRaises(ValueError):
                 stage_pages('one', source, ledger)
             self.assertEqual(len(ledger.pending()), 1)
             self.assertEqual(ledger.checkpoint('one'), (None, False))
+            self.assertFalse(stage_pages('one', Pages({None: ([item('new')], 'next')}), ledger, max_pages=1))
             ledger.close()
 
     def test_stale_writer_does_not_advance_or_add_records(self):
