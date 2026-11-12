@@ -1,6 +1,6 @@
 # Shipment tracking — local POC core
 
-This is a development POC, not a complete Salesforce integration. It includes an experimental USPS Tracking 3.2 client in addition to the synthetic core. No Salesforce network jobs, scheduler, Salesforce updates, storefront or alerts are included. Keep credentials and actual shipment data in restricted local configuration, never in Git.
+This is a development POC, not a complete Salesforce integration. It includes experimental USPS Tracking 3.2 and Salesforce Shipment REST clients in addition to the synthetic core. No connected end-to-end job, scheduler, storefront or alerts are included. Keep credentials and actual shipment data in restricted local configuration, never in Git.
 
 Requires Python 3.11 or later; uses only the Python standard library. From this directory:
 
@@ -15,3 +15,5 @@ Both synthetic ingest paths require an explicit source ID and scope their packag
 Before the Salesforce-first integration can run, connect the existing middleware to Salesforce, establish carrier mappings, choose recovery and alert policies, and validate buyer isolation. An ERP interface is a deferred extension. The five-request goal is unverified: chunking does not account for reads, authentication, pagination or retries. No end-to-end acceptance criterion is claimed as passed.
 
 The USPS client obtains an OAuth token and posts up to 35 distinct tracking numbers per request. It rejects redirects and responses that do not match the requested numbers. It returns carrier data without applying a Salesforce status mapping or writing any Salesforce records. One live USPS request was verified; test-environment behavior, partial errors, production controls, mappings and automated synchronization need further validation. ERP is deferred for the Salesforce-first POC.
+
+The Salesforce client accepts a separately supplied instance URL and token and exposes bounded reads by explicit Shipment IDs and status updates of up to 200 records. It follows only same-origin query locators and reports individual write outcomes without error messages. It has only synthetic tests, has not been run against a Salesforce org, and does not resolve concurrent changes or ambiguous writes. Do not use it to update real records until authorization, field ownership, ordering, reconciliation and the end-to-end workflow are verified.
