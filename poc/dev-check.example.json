@@ -1,0 +1,6 @@
+{
+  "sf_cli": "sf",
+  "sf_alias": "YOUR_AUTHENTICATED_DEV_ORG_ALIAS",
+  "shipment_id": "YOUR_TEST_SHIPMENT_ID",
+  "usps_credentials_path": "/path/outside/repository/usps.credentials.json"
+}
