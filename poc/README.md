@@ -37,9 +37,9 @@ The command uses hard-coded synthetic shipment records and fixtures and prints t
 
 The workflow simulation configuration requires `mode: simulation`, a selected `source`, and a `sources` map containing that source's UPS/FedEx fixtures. A missing source, carrier fixture or tracking fixture fails instead of falling back to live APIs. The Salesforce reader passed to the workflow can still perform reads; the example passes an in-memory reader. Access isolation for real readers and data is unverified. Applying changes is disabled for both paths.
 
-### Guarded-write proof still required
+### Guarded-write design
 
-The smallest useful sandbox proof needs explicitly authorized, clearly labeled disposable Shipment records and a test identity with only the required read/update access; keep their IDs and environment values outside Git. Confirm the conditional header actually reaches the target API, then read a fixture, change it with a separate authorized writer, and attempt an update using the stale condition. Observe whether the stale update is rejected and the intervening change preserved. Repeat with unchanged data, rapid same-second changes and failure/rollback cases; verify per-record outcomes, partial failure and the chosen batch/request budget. A simple rejected stale write alone cannot establish strong concurrency safety, especially because Salesforce documents timestamp validation as weak and other writers may not cooperate. Reconcile all writer behavior and uncertainty before enabling writes. An Apex/Graph design, if selected, needs its own permissions, deployment and test evidence; unattended worker authentication is a separate unresolved gate. No such update proof has been run.
+The proposed sandbox proof uses a single Shipment row lock and compares the expected values with the locked row before changing its status. The design describes the native REST alternatives, the minimum test permissions and fixtures, and the cases the sandbox proof must cover. Workflow writes remain disabled pending observed concurrency evidence and a separate unattended authentication check. [Guarded Shipment writes](guarded-write-design.md)
 
 ## Read-only developer check
 

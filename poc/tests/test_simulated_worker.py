@@ -2,7 +2,7 @@ import json
 import subprocess
 import sys
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from shipment_poc.sync import sync_delivered
 from shipment_poc.simulation import SimulatedCarrier
@@ -66,11 +66,14 @@ class SimulatedWorkerTest(unittest.TestCase):
                 sync_delivered(reader, NoLiveCarrier(), ids, simulation=config)
         self.assertEqual(reader.writes, 0)
 
-    def test_apply_remains_disabled_in_simulation_mode(self):
-        reader = LocalShipmentReader(self.records)
+    def test_apply_remains_disabled_before_accessing_connectors_in_simulation_mode(self):
+        reader = Mock(spec_set=LocalShipmentReader)
+        carrier = Mock(spec_set=NoLiveCarrier)
         with self.assertRaisesRegex(ValueError, 'disabled'):
-            sync_delivered(reader, NoLiveCarrier(), [], apply=True, simulation=self.config)
-        self.assertEqual(reader.writes, 0)
+            sync_delivered(reader, carrier, ['0OB000000000001AAA'], apply=True,
+                           simulation=self.config)
+        self.assertEqual(reader.mock_calls, [])
+        self.assertEqual(carrier.mock_calls, [])
 
     def test_simulated_carrier_and_wrapped_simulated_response_never_become_live_plans(self):
         reader = LocalShipmentReader([self.records[2]])

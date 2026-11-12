@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import Mock
 
 from shipment_poc.sync import sync_delivered
 
@@ -39,17 +40,13 @@ class SyncTest(unittest.TestCase):
         self.assertEqual(result['planned'], [{'Id': '0OB000000000001AAA', 'Status': 'Delivered'}])
         self.assertEqual(sf.writes, [])
 
-    def test_apply_is_disabled_until_atomic_conflict_protection_is_verified(self):
-        records = [
-            {'Id': '0OB000000000001AAA', 'Provider': 'USPS', 'TrackingNumber': 'EXAMPLE01', 'Status': 'Shipped'},
-            {'Id': '0OB000000000002AAA', 'Provider': 'USPS', 'TrackingNumber': 'EXAMPLE02', 'Status': 'Shipped'},
-            {'Id': '0OB000000000003AAA', 'Provider': 'USPS', 'TrackingNumber': 'EXAMPLE01', 'Status': 'Voided'},
-            {'Id': '0OB000000000004AAA', 'Provider': 'UPS', 'TrackingNumber': 'EXAMPLE01', 'Status': 'Shipped'},
-        ]
-        sf = FakeSalesforce(records)
+    def test_apply_is_disabled_before_accessing_either_connector(self):
+        sf = Mock(spec_set=FakeSalesforce)
+        carrier = Mock(spec_set=FakeUSPS)
         with self.assertRaisesRegex(ValueError, 'disabled'):
-            sync_delivered(sf, FakeUSPS(), [r['Id'] for r in records], apply=True)
-        self.assertEqual(sf.writes, [])
+            sync_delivered(sf, carrier, ['0OB000000000001AAA'], apply=True)
+        self.assertEqual(sf.mock_calls, [])
+        self.assertEqual(carrier.mock_calls, [])
 
 
 if __name__ == '__main__': unittest.main()
