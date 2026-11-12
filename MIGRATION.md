@@ -14,7 +14,7 @@ US carriers UPS, FedEx and USPS; Job A 07:00/19:00 and Job B 07:15/19:15 America
 
 ## Next actions
 
-1. Initial sanitized package published to the private repository; ten files read back byte-for-byte at commit `7ba679820dcdc8b53d302f1aac5c072357576589`. Further revisions require their own readback.
+1. Historical milestone: initial sanitized package published while the repository was private; ten files read back byte-for-byte at commit `7ba679820dcdc8b53d302f1aac5c072357576589`. Further revisions require their own readback.
 2. Secure and verify an authorized restricted source snapshot and mapping. Compare every source criterion to this draft and reconcile differences; keep exact constraints and label proposals.
 3. Refresh concurrent GitHub and ClickUp state, publish only reviewed sanitized content, then read back files, links, privacy and visibility.
 4. Refresh and reconcile ClickUp immediately before replacing its description with the two verified GitHub links. Preserve original text and attachments. Recheck affected reviews separately.
@@ -54,4 +54,4 @@ A maker comparison against the locally available revision 0.1 story identified f
 | C3–C4: deltas, five-request target, alert details | Story AC-03–05; technical design budget and alert sections; matrix request target and partial failures. |
 | Cross-story DoD | Story AC-07 and design operational handoff; environment tests, evidence, runbook and owner decisions remain NOT RUN/Pending. |
 
-This is a thematic maker mapping of the accessible backlog, not a scenario-by-scenario independent audit or proof that all original source chats and attachments were captured. ClickUp shows its public-link toggle off and an inherited task-sharing control; the actual full intended-reader access scope for a new archive has not been verified. The ClickUp connector returned its daily call limit on the preservation attempt. An equivalent-access snapshot and retrievability remain unverified; keep the description until the archive is verified. The original task and three attachments remain intact.
+This is a thematic maker mapping of the accessible backlog, not a scenario-by-scenario independent audit or proof that all original source chats and attachments were captured. ClickUp shows its public-link toggle off and an inherited list audience; expanding the task share view displayed one person (the workspace owner). No separate archive has yet been created or checked for equivalent access and retrieval. The ClickUp connector returned its daily call limit on the preservation attempt. An equivalent-access snapshot and retrievability remain unverified; keep the description until the archive is verified. The original task and three attachments remain intact.
