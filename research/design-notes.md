@@ -2,6 +2,10 @@
 
 This is a sanitized synthesis of the MVP backlog, low-level design and earlier component discovery. It is not proof of behavior in any particular org or implementation. Public primary references to consult include Salesforce Shipment object and field references, OrderSummary, sObject Collections upsert/update, OAuth client credentials, Commerce order expressions, and current UPS, FedEx and USPS tracking API documentation. Vendor capabilities and versions require current verification before implementation.
 
+## Current POC scope
+
+Salesforce Shipment records are the source for this POC; ERP ingestion is deferred. USPS is the intended live carrier, with UPS and FedEx simulated. A USPS website lookup has been checked manually; authenticated API use, automatic synchronization and buyer access remain unverified. Consult the [current story](../story/user-story.md) for progress.
+
 ## Observations and limitations
 
 - The standard shipment model includes order relationships and tracking fields; verify exact availability, writability, picklist values, field type, permissions and object support in the target org. A direct Order-only relationship is not established by the research and must be verified.
