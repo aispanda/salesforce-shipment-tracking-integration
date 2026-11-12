@@ -20,6 +20,8 @@ class Ledger:
             package_id TEXT NOT NULL, revision TEXT NOT NULL, payload TEXT NOT NULL,
             state TEXT NOT NULL DEFAULT 'pending', error TEXT,
             PRIMARY KEY (package_id, revision))''')
+        self.db.execute('''CREATE TABLE IF NOT EXISTS checkpoints (
+            source TEXT PRIMARY KEY, cursor TEXT, complete INTEGER NOT NULL DEFAULT 0)''')
         self.db.commit()
 
     def stage(self, package_id, revision, payload):
@@ -27,10 +29,36 @@ class Ledger:
             raise ValueError('package and revision are required')
         value = json.dumps(payload, sort_keys=True, separators=(',', ':'), allow_nan=False)
         with self.db:
-            self.db.execute('INSERT OR IGNORE INTO work(package_id, revision, payload) VALUES (?, ?, ?)', (package_id, revision, value))
-            existing = self.db.execute('SELECT payload FROM work WHERE package_id=? AND revision=?', (package_id, revision)).fetchone()
-            if existing['payload'] != value:
-                raise ValueError('revision payload conflict')
+            self._stage_value(package_id, revision, value)
+
+    def _stage_value(self, package_id, revision, value):
+        self.db.execute('INSERT OR IGNORE INTO work(package_id, revision, payload) VALUES (?, ?, ?)', (package_id, revision, value))
+        existing = self.db.execute('SELECT payload FROM work WHERE package_id=? AND revision=?', (package_id, revision)).fetchone()
+        if existing['payload'] != value:
+            raise ValueError('revision payload conflict')
+
+    def checkpoint(self, source):
+        row = self.db.execute('SELECT cursor, complete FROM checkpoints WHERE source=?', (source,)).fetchone()
+        return (row['cursor'], bool(row['complete'])) if row else (None, False)
+
+    def stage_page(self, source, expected_cursor, next_cursor, records):
+        """Atomically stage a validated synthetic page and advance its local checkpoint."""
+        values = [(package_key(source, 'synthetic', record['package_id']), record['revision'],
+                   json.dumps(record['payload'], sort_keys=True, separators=(',', ':'), allow_nan=False))
+                  for record in records]
+        self.db.execute('BEGIN IMMEDIATE')
+        try:
+            if self.checkpoint(source) != (expected_cursor, False):
+                raise ValueError('checkpoint changed; reload before retry')
+            for package_id, revision, value in values:
+                self._stage_value(package_id, revision, value)
+            self.db.execute('''INSERT INTO checkpoints(source, cursor, complete) VALUES (?, ?, ?)
+                ON CONFLICT(source) DO UPDATE SET cursor=excluded.cursor, complete=excluded.complete''',
+                (source, next_cursor, int(next_cursor is None)))
+            self.db.commit()
+        except BaseException:
+            self.db.rollback()
+            raise
 
     def _set_state(self, package_id, revision, state, error):
         with self.db:
