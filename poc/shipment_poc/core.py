@@ -1,0 +1,90 @@
+"""Synthetic POC primitives; not a production integration."""
+import hashlib
+import json
+import sqlite3
+
+
+def package_key(source: str, tenant: str, package: str) -> str:
+    parts = (source, tenant, package)
+    if any(not isinstance(p, str) or not p.strip() for p in parts):
+        raise ValueError('source, tenant and package must be nonempty strings')
+    data = b''.join(len(p.encode('utf-8')).to_bytes(4, 'big') + p.encode('utf-8') for p in parts)
+    return 'v1:' + hashlib.sha256(data).hexdigest()
+
+
+class Ledger:
+    def __init__(self, path):
+        self.db = sqlite3.connect(path)
+        self.db.row_factory = sqlite3.Row
+        self.db.execute('''CREATE TABLE IF NOT EXISTS work (
+            package_id TEXT NOT NULL, revision TEXT NOT NULL, payload TEXT NOT NULL,
+            state TEXT NOT NULL DEFAULT 'pending', error TEXT,
+            PRIMARY KEY (package_id, revision))''')
+        self.db.commit()
+
+    def stage(self, package_id, revision, payload):
+        if not package_id or not revision:
+            raise ValueError('package and revision are required')
+        value = json.dumps(payload, sort_keys=True, separators=(',', ':'), allow_nan=False)
+        with self.db:
+            self.db.execute('INSERT OR IGNORE INTO work(package_id, revision, payload) VALUES (?, ?, ?)', (package_id, revision, value))
+            existing = self.db.execute('SELECT payload FROM work WHERE package_id=? AND revision=?', (package_id, revision)).fetchone()
+            if existing['payload'] != value:
+                raise ValueError('revision payload conflict')
+
+    def _set_state(self, package_id, revision, state, error):
+        with self.db:
+            cursor = self.db.execute('UPDATE work SET state=?, error=? WHERE package_id=? AND revision=?', (state, error, package_id, revision))
+            if cursor.rowcount != 1:
+                raise KeyError((package_id, revision))
+
+    def complete(self, package_id, revision):
+        self._set_state(package_id, revision, 'complete', None)
+
+    def fail(self, package_id, revision, error):
+        self._set_state(package_id, revision, 'pending', error)
+
+    def pending(self):
+        return [dict(row) for row in self.db.execute("SELECT package_id, revision, payload, error FROM work WHERE state='pending' ORDER BY package_id, revision")]
+
+    def close(self):
+        self.db.close()
+
+
+def apply_event(previous, incoming, allowed_statuses=frozenset({'In Transit', 'Delivered'})):
+    """Apply already-normalized events; unknown values and corrections need review."""
+    from datetime import datetime
+
+    def parse(value):
+        try:
+            result = datetime.fromisoformat(value.replace('Z', '+00:00'))
+        except (TypeError, ValueError, AttributeError) as exc:
+            raise ValueError('invalid event time') from exc
+        if result.utcoffset() is None:
+            raise ValueError('event time must have a timezone')
+        return result
+
+    if incoming.get('status') not in allowed_statuses:
+        raise ValueError('unapproved status')
+    new_time = parse(incoming.get('event_time'))
+    if previous is not None:
+        old_time = parse(previous.get('event_time'))
+        if new_time <= old_time:
+            return previous
+        if previous.get('status') == 'Delivered' and incoming['status'] != 'Delivered':
+            raise ValueError('delivery correction requires a policy')
+    return dict(incoming)
+
+
+def collection_chunks(records, size=200):
+    """Yield every record in Salesforce-sized collections without dropping overflow."""
+    if not isinstance(size, int) or isinstance(size, bool) or not 1 <= size <= 200:
+        raise ValueError('collection size must be between 1 and 200')
+    batch = []
+    for record in records:
+        batch.append(record)
+        if len(batch) == size:
+            yield batch
+            batch = []
+    if batch:
+        yield batch
