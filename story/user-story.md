@@ -1,12 +1,12 @@
 # Shipment tracking integration — delivery story
 
-**Migration guide:** [DELIVERY.md](https://github.com/aispanda/Reusable-Delivery/blob/d486dcf684f12fd911c06d2ec2b680d66a4aac3e/DELIVERY.md), commit `d486dcf684f12fd911c06d2ec2b680d66a4aac3e`, route MIGRATE. Migration remains incomplete; see [migration record](../MIGRATION.md).
+**Migration guide:** [DELIVERY.md](https://github.com/aispanda/Reusable-Delivery/blob/4d0155830d0adf0cc214a466dbfa7fb22af1a096/DELIVERY.md), commit `4d0155830d0adf0cc214a466dbfa7fb22af1a096`, route MIGRATE. Migration remains incomplete; see [migration record](../MIGRATION.md).
 
 **Revision:** 0.2, requirements draft. **Status:** documentation in progress; implementation, acceptance and independent verification NOT RUN. **Accountable human:** Pending. **Source template:** AI delivery story Markdown v1.3 and Field Guide v1 with operational addition v1.1; project-specific links and identifiers remain outside Git; an approved retrievable restricted index and access owner are Pending. Access to the original online template must be verified by the project coordinator. **Origin:** originating project conversation and current ClickUp story, referenced in local context.
 
 ## Current state and immediate next action
 
-A reusable, configurable proof of concept is planned; the repository contains documentation, not a working integration. The target environment's object access, buyer sharing, page component and carrier/ERP contracts are unverified. The first review concerned an earlier story excerpt; changes to carriers, schedule and repository requirements require a focused Jev recheck. A recheck attempt was rejected by automatic approval review because the revised payload was not specifically authorized for the external service; no verdict was returned. No model review is acceptance. Immediate action: publish and verify the private documentation package; independently reconcile this sanitized story and linked design against the full source and review the publication content. Executor: Codex desktop, actual exact model identifier unknown; accountable human Pending. Stop if evidence or destination access is unavailable.
+The sanitized documentation is published in a public repository; this is not a working integration. Target metadata, buyer sharing, storefront behavior and carrier/ERP contracts remain unverified. Jev reviewed the sanitized package at shipment commit `a2c1507cb6a666157f5559fa3080bd916569eed9`; see [review record](https://github.com/aispanda/Reusable-Delivery/blob/4d0155830d0adf0cc214a466dbfa7fb22af1a096/VALIDATION.md#jev-review-of-guide-and-shipment-pilot). Its judgments do not establish source completeness or runtime behavior. Next: reconcile available source documents and criteria, then secure a retrievable restricted snapshot before ClickUp cutover. Executor: Codex desktop, actual exact model identifier unknown; accountable human Pending. Independent verification NOT RUN; human acceptance Pending.
 
 ## Outcome, scope and context
 
@@ -29,7 +29,7 @@ The following are proposed translations of the source requirements; stable IDs a
 - **AC-07 Security and evidence:** Test least privilege, secrets, multiple packages, replay, out-of-order events, failures and access isolation. Independent verification and human acceptance remain pending.
 - **AC-08 Reuse (proposed):** Given a clean checkout and permitted synthetic configuration, when an operator follows the documented setup, then the configurable jobs can be set up without real environment values in committed files; verify configuration and staged content. NOT RUN.
 
-AC-01–07 above preserve the wording captured from the existing ClickUp description; AC-08 preserves its later proposed addition. An independent source-to-destination comparison remains pending, including any intervening edits and the full restricted source history.
+AC-01–07 above preserve the wording captured from the existing ClickUp description; AC-08 preserves its later proposed addition. The earlier, longer 0.1 story contains additional details; see the [comparison](../MIGRATION.md#additional-original-story-comparison). Those details remain applicable. An independent source-to-destination comparison remains pending, including intervening edits and the full restricted source history.
 
 ## Solution and assignments
 
@@ -39,9 +39,9 @@ The proposed design is documented in [technical design](../research/technical-de
 
 | ID | State | Executor / output | Dependencies |
 |---|---|---|---|
-| S-01 | Complete | LLM: Codex desktop; actual model unknown. Reconcile source and sanitized story/design. | Source story and design accessible. |
+| S-01 | In progress | AI: Codex desktop; actual model unknown. Reconcile source and sanitized story/design. | Full source, restricted snapshot and comparison. |
 | S-02 | Complete (prior draft branch only; new repository initial documentation published and verified; full migration Pending) | LLM: Codex desktop, planned GPT-6 Astra medium; actual model recorded at execution. Publish sanitized documentation in reviewable branch. | S-01, content and secret review, repository access. |
-| S-03 | Pending | AI: Jev, exact model version recorded at execution. Recheck changed story evidence. | Current version and permission to transmit. |
+| S-03 | Complete for reviewed revision; affected recheck Pending if needed | AI decision model `jev-1.14.0` (API metadata): reviewed sanitized shipment commit `a2c1507cb6a666157f5559fa3080bd916569eed9`. | Exact reviewed inputs and permitted transmission. |
 | S-04 | Pending | Human: integration owner Pending; LLM implementer planned GPT-6 Astra medium; deterministic workflow/tool/version Pending. Establish contracts and implement bounded jobs. | Source and carrier interfaces, sandbox, authorized credentials. |
 | S-05 | Pending | Automation: selected test runner/version Pending with accountable operator Pending. Run synthetic failure and access tests. | S-04 and fixtures. |
 | S-06 | Pending | Fresh independent human or AI checker Pending; human acceptance owner Pending. Verify actual results and acceptance evidence. | S-05. |
@@ -52,7 +52,7 @@ The proposed design is documented in [technical design](../research/technical-de
 
 ## Review, repair and acceptance
 
-Earlier Jev 1.14.0 reviewed selected text from revision 0.1; it did not inspect the complete rendered page, design or live org. All 15 focused answers matched that review's rubric. Carriers, timezone and reusable-repository requirements were added afterward; focused recheck Pending. Maker's human-reader and AI-execution reviews checked scope, status, bounded steps and separate private context; unresolved deployment decisions remain explicit. Independent checker NOT RUN; human acceptance Pending.
+Earlier Jev 1.14.0 reviewed selected revision 0.1 text. A later Jev review covered all 18 sanitized guide and shipment files at the revisions linked above; private originals and live systems were not supplied. It did not establish source completeness, portable retrieval or implementation. Preserve the earlier rejected transmission attempt as historical; the later review is a separate authorized execution. Maker's human-reader and AI-execution reviews checked scope, status, bounded steps and separate private context; unresolved deployment decisions remain explicit. Independent checker NOT RUN; human acceptance Pending.
 
 ## Impact, authority and recovery
 
@@ -64,4 +64,4 @@ Middleware/ERP contracts, carrier credentials and mappings, target-org metadata 
 
 ## Evidence, changes and traceability
 
-Revision 0.1 captured the original MVP criteria and focused review. Revision 0.2 incorporates the initial three carriers, Eastern schedule, Salesforce record-based buyer access, and reusable configuration requirement. Source-specific evidence and template links are indexed outside Git. Material changes require affected reviews to be rerun. Delivery NOT RUN; independent verification NOT RUN; human acceptance Pending.
+Revision 0.1 captured the original MVP criteria and focused review. Revision 0.2 incorporates the initial three carriers, Eastern schedule, Salesforce record-based buyer access, and reusable configuration requirement. Source-specific evidence and template links are outside Git; approved portable retrieval and access ownership remain Pending. Material changes require affected reviews to be rerun. Delivery NOT RUN; independent verification NOT RUN; human acceptance Pending.
