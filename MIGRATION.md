@@ -2,7 +2,7 @@
 
 Guide revision: d486dcf684f12fd911c06d2ec2b680d66a4aac3e, route MIGRATE. The guide was read at this single commit. Its prior guide SHA is not applicable: the prior story used the ClickUp Markdown template v1.3 and Field Guide v1, not a commit-pinned delivery guide.
 
-This local package is derived from the prior sanitized draft. The dedicated private repository was created after the user confirmed the separate repository request. Publication and readback are recorded separately; do not infer completion from repository creation. The existing draft PR and its sources remain unchanged. ClickUp synchronization is pending publication, access-controlled capture of its current full description, and refresh/reconciliation before replacement. Previous attachments remain historical. An ignored local file is not itself approved restricted storage. Access-controlled storage owner and retrieval procedure: Pending.
+This local package is derived from the prior sanitized draft. The dedicated repository was created after the user confirmed the separate repository request; public visibility was authorized and verified on GitHub. Publication and readback are recorded separately; do not infer completion from repository creation. The existing draft PR and its sources remain unchanged. ClickUp synchronization is pending publication, access-controlled capture of its current full description, and refresh/reconciliation before replacement. Previous attachments remain historical. An ignored local file is not itself approved restricted storage. Access-controlled storage owner and retrieval procedure: Pending.
 
 ## Criteria comparison and reconciliation needed
 
