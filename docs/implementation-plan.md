@@ -1,6 +1,6 @@
 # Shipment tracking POC implementation plan
 
-**Goal:** Give authorized B2B buyers shipment status and tracking links associated with their orders, using twice-daily outbound synchronization. This is a design and execution plan; nothing here claims an implemented, tested or deployed system.
+**Goal:** Give authorized B2B buyers shipment status and tracking links associated with their orders, using twice-daily outbound synchronization. This design and execution plan has scoped evidence for the offline synthetic prototype. Live integration, deployment and acceptance remain pending.
 
 **Approach:** Use the existing self-hosted middleware and its native scheduler. Implement small interchangeable ERP, carrier and Salesforce adapters around a common package/event format. Use synthetic local fixtures first. Run ERP dispatch at 07:00 and 19:00 and status polling at 07:15 and 19:15 Eastern Time; no inbound webhook. A fixed 15-minute offset does not guarantee completion: skip or queue a dependent status run until dispatch work is ready. Handle daylight saving and missed runs explicitly.
 
@@ -17,6 +17,10 @@
 7. **Operate and test.** Test both schedules, duplicate replay, partial Salesforce results, source or carrier outage, 401/403/429/5xx, timeout after commit, older scans, mapping gaps and buyer isolation with synthetic data. Alert on failed SaveResults with a safe identifier, protected payload reference and error; choose an operator and destination. Record counts, retries and recovery. Do not trigger real carrier notifications or customer communications during tests.
 8. **Measure API usage.** The requested target is at most five Salesforce REST requests per run for 800 active shipments: one unpaginated read plus four update batches. Pagination, retries, token handling, reconciliation and order lookups can exceed it. Record actual counts and resolve the accounting/exception policy; never drop shipments to meet the target.
 9. **Prepare GitHub.** Review every proposed file and staged diff, scan for credentials, org-specific addresses, account identifiers and real shipment data, and check ignored files. Use a clean repository and synthetic examples. Verify repository owner and visibility before publication. If a secret is exposed, rotate it and follow the organization's incident and history-removal process; deleting a later commit is insufficient.
+
+## QA for each implementation increment
+
+Use the [story checklist](../story/user-story.md#execution-checklist) and [pinned QA rules](https://github.com/aispanda/Reusable-Delivery/blob/6013aedacbc1ee7c3aaee24459152ee5ff381eef/CODE-QUALITY.md). Plan behavior checks and affected failure paths before each increment. Run the repository check locally and in CI. Material changes go to a fresh reviewer after writer checks. Record the proposed revision, tested revision, runtime, result and findings. Reopen affected checks after repair. Keep the offline CI pilot, sandbox integration verification and human acceptance as separate results.
 
 ## POC decisions still needed
 
