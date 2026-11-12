@@ -33,16 +33,17 @@ AC-01–07 above preserve the wording captured from the existing ClickUp descrip
 
 ## Solution and assignments
 
-The proposed design is documented in [technical design](../research/technical-design.md) and [implementation plan](../docs/implementation-plan.md). Project-specific values remain outside Git. The tracking URL resides on the shipment record subject to target-org field and rendering validation. Salesforce governs record visibility; carrier sites govern their external links. The five-request target is not proven and is not waived. Human product, integration, security and acceptance owners: Pending. Planned LLM executor: Codex desktop using GPT-6 Astra, medium reasoning, when available and assigned; actual model and identity source must be recorded for each run. This planning session's precise model identity is unknown. Deterministic workflows, versions and operators are Pending selection. Jev is a decision model, not assumed to be an LLM.
+The proposed design is documented in [technical design](../research/technical-design.md) and [implementation plan](../docs/implementation-plan.md). Project-specific values remain outside Git. The tracking URL resides on the shipment record subject to target-org field and rendering validation. Salesforce governs record visibility; carrier sites govern their external links. The five-request target is not proven and is not waived. Human product, integration, security and acceptance owners: Pending. Planned LLM executor: Codex desktop using `gpt-6-astra`, medium reasoning, when available and assigned; actual model and identity source must be recorded for each run. This planning session's precise model identity is unknown. Deterministic workflows, versions and operators are Pending selection. Jev is a decision model, not assumed to be an LLM.
 
 ## Execution checklist
 
 | ID | State | Executor / output | Dependencies |
 |---|---|---|---|
 | S-01 | In progress | AI: Codex desktop; actual model unknown. Reconcile source and sanitized story/design. | Full source, restricted snapshot and comparison. |
-| S-02 | Complete (prior draft branch only; new repository initial documentation published and verified; full migration Pending) | LLM: Codex desktop, planned GPT-6 Astra medium; actual model recorded at execution. Publish sanitized documentation in reviewable branch. | S-01, content and secret review, repository access. |
+| S-02 | Complete (prior draft branch only; new repository initial documentation published and verified; full migration Pending) | LLM: Codex desktop, planned `gpt-6-astra`, medium reasoning; actual model recorded at execution. Publish sanitized documentation in reviewable branch. | S-01, content and secret review, repository access. |
 | S-03 | Complete for reviewed revision; affected recheck Pending if needed | AI decision model `jev-1.14.0` (API metadata): reviewed sanitized shipment commit `a2c1507cb6a666157f5559fa3080bd916569eed9`. | Exact reviewed inputs and permitted transmission. |
-| S-04 | Pending | Human: integration owner Pending; LLM implementer planned GPT-6 Astra medium; deterministic workflow/tool/version Pending. Establish contracts and implement bounded jobs. | Source and carrier interfaces, sandbox, authorized credentials. |
+| S-04 | Pending | Human: integration owner Pending. Decide source and carrier contracts and operational policies. | Interfaces, sandbox and authorized credentials. |
+| S-04a | Pending | AI: Codex desktop, planned `gpt-6-astra`, medium reasoning; actual identity recorded at execution. Implement bounded jobs. | S-04, explicit implementation authority and inputs. |
 | S-05 | Pending | Automation: selected test runner/version Pending with accountable operator Pending. Run synthetic failure and access tests. | S-04 and fixtures. |
 | S-06 | Pending | Fresh independent human or AI checker Pending; human acceptance owner Pending. Verify actual results and acceptance evidence. | S-05. |
 
