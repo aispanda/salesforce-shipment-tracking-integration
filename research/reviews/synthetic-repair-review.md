@@ -1,6 +1,6 @@
 # Independent synthetic repair review
 
-**Scope:** Offline shipment prototype repair [1a2be6635f48520a5403d9b5a8d20311699beff0](https://github.com/aispanda/salesforce-shipment-tracking-integration/commit/1a2be6635f48520a5403d9b5a8d20311699beff0). **Reviewer:** fresh independent Codex session `01a1ce04-b48b-7761-a1b4-1955a8b9ff64`; its local session metadata records `gpt-6-astra` and `high` reasoning. **Status:** review performed; independent remote revision and CI verification remain pending.
+**Scope:** Offline shipment prototype repair [1a2be6635f48520a5403d9b5a8d20311699beff0](https://github.com/aispanda/salesforce-shipment-tracking-integration/commit/1a2be6635f48520a5403d9b5a8d20311699beff0). **Reviewer:** fresh independent Codex session `01a1ce04-b48b-7761-a1b4-1955a8b9ff64`; its local session metadata records `gpt-6-astra` and `high` reasoning. **Status:** independent review and follow-up revision and CI verification completed for the scoped synthetic implementation.
 
 The reviewer reported no actionable correctness findings in the inspected synthetic scope. The reviewer ran `python3 -B check.py`: 25 tests passed on Python 3.14.8. Independent temporary SQLite probes exercised non-dict mappings, shared source identity, cross-source isolation, cursor cycles after restart, rollback of cursor history and page changes, legacy checkpoint seeding, stale writers, late failure and batch rollback with an already-completed later record.
 
@@ -10,4 +10,8 @@ Writer-verified [CI run 43155008967](https://github.com/aispanda/salesforce-ship
 
 Pre-upgrade cursor history cannot be reconstructed. Recurring snapshots, distributed coordination, live interfaces, Salesforce access, business acceptance and production readiness remain unverified. This review does not cover future revisions.
 
-Follow-up: the coordinator verified the reviewer session's `turn_context` model and effort in its local session record. A read-only independent GitHub/CI verification retry is pending.
+Follow-up: the coordinator verified the reviewer session's `turn_context` model and effort in its local session record. The independent GitHub/CI verification retry succeeded as recorded below.
+
+## Independent verification follow-up
+
+The same fresh reviewer subsequently fetched implementation commit `1a2be6635f48520a5403d9b5a8d20311699beff0` using the GitHub connector and independently matched the Git blob hashes of the local `core.py`, `pipeline.py` and all three test files. The reviewer independently inspected [CI run 43155008967](https://github.com/aispanda/salesforce-shipment-tracking-integration/actions/runs/43155008967) and both job logs: the checked-out merge was `5fc3375264e6083a8c6c2579c7da537bb65205c2`; 25 tests passed on each of Python 3.11.18 and 3.14.10. The reviewer compared the implementation commit with that merge and found only the addition of the CI workflow and `poc/check.py`; the reviewed implementation and tests were unchanged. The original access limitations above describe the initial review and are superseded by this follow-up. No actionable correctness findings were identified within the synthetic scope.
