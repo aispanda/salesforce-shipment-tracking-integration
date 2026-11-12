@@ -1,6 +1,6 @@
 # Shipment tracking — local POC core
 
-This is a synthetic development starting point, not a working ERP, carrier or Salesforce integration. No network jobs, scheduler, Salesforce updates, storefront or alerts are included. Do not use real shipment data in this local prototype.
+This is a development POC, not a complete Salesforce integration. It includes an experimental USPS Tracking 3.2 client in addition to the synthetic core. No Salesforce network jobs, scheduler, Salesforce updates, storefront or alerts are included. Keep credentials and actual shipment data in restricted local configuration, never in Git.
 
 Requires Python 3.11 or later; uses only the Python standard library. From this directory:
 
@@ -12,4 +12,6 @@ The prototype provides source-scoped stable keys, a local SQLite work ledger, of
 
 Both synthetic ingest paths require an explicit source ID and scope their package keys consistently. The unpaged path commits each record independently; replay is idempotent but an error can leave earlier records staged. A failure can be recorded while work is pending, but cannot reopen a completed item. Repeated completion is idempotent; an explicit recovery/reopen operation is not implemented. Equal-time carrier events retain the prior event in this prototype, including conflicting statuses; an approved conflict and correction policy is still needed before live use.
 
-Before a real integration can run, identify the existing middleware and ERP interface, verify Salesforce metadata and access, establish carrier contracts and mappings, choose recovery and alert policies, and validate buyer isolation. The five-request goal is unverified: chunking does not account for reads, authentication, pagination or retries. No acceptance criterion is claimed as passed.
+Before the Salesforce-first integration can run, connect the existing middleware to Salesforce, establish carrier mappings, choose recovery and alert policies, and validate buyer isolation. An ERP interface is a deferred extension. The five-request goal is unverified: chunking does not account for reads, authentication, pagination or retries. No end-to-end acceptance criterion is claimed as passed.
+
+The USPS client obtains an OAuth token and posts up to 35 distinct tracking numbers per request. It rejects redirects and responses that do not match the requested numbers. It returns carrier data without applying a Salesforce status mapping or writing any Salesforce records. One live USPS request was verified; test-environment behavior, partial errors, production controls, mappings and automated synchronization need further validation. ERP is deferred for the Salesforce-first POC.
