@@ -50,7 +50,7 @@ The following is a **candidate** Metadata API source-format definition, not depl
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<CustomField xmlns="<external-url>">
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>External_Tracking_Id__c</fullName>
     <caseSensitive>false</caseSensitive>
     <description>Stable source-scoped shipment identity for idempotent integration.</description>
@@ -70,11 +70,11 @@ Confirm that this standard object supports the custom field and exact property c
 
 The supplied formula embeds Markdown link syntax inside the URL strings; those strings are **not valid carrier URLs**. `Provider` is a picklist; use `TEXT(Provider)` in a text expression. Tracking numbers must be URL encoded. The request's carrier URL patterns are examples supplied by the user; they have **not** been verified with carrier owners. Replace only after confirming current public tracking URL contracts and allowed domains. This conservative draft produces no link for `Other` or missing/unknown provider; the user's requested fallback to `TrackingUrl` is a **pending design decision** because arbitrary URL content could expose buyers to untrusted domains. If that fallback is approved, validate URL scheme and host on ingestion and all other write paths before displaying it.
 
-The following candidate formula metadata must pass target-org compilation and security/UI tests. It does not assert LWR will render `HYPERLINK` as a clickable link.
+These public carrier patterns are examples from the source and remain unverified; DHL is outside the initial three-carrier rollout. The following candidate formula metadata must pass target-org compilation and security/UI tests. It does not assert LWR will render `HYPERLINK` as a clickable link.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<CustomField xmlns="<external-url>">
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Live_Tracking_Link__c</fullName>
     <description>Provides a carrier tracking link from an approved carrier pattern.</description>
     <formula><![CDATA[
@@ -85,10 +85,10 @@ IF(
   "",
   HYPERLINK(
     CASE(TEXT(Provider),
-      "UPS", "<external-url>" & URLENCODE(TrackingNumber),
-      "FedEx", "<external-url>" & URLENCODE(TrackingNumber),
-      "USPS", "<external-url>" & URLENCODE(TrackingNumber),
-      "DHL", "<external-url>" & URLENCODE(TrackingNumber),
+      "UPS", "https://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=" & URLENCODE(TrackingNumber),
+      "FedEx", "https://www.fedex.com/fedextrack/?trknbr=" & URLENCODE(TrackingNumber),
+      "USPS", "https://tools.usps.com/go/TrackConfirmAction?tLabels=" & URLENCODE(TrackingNumber),
+      "DHL", "https://www.dhl.com/en/express/tracking.html?AWB=" & URLENCODE(TrackingNumber),
       ""
     ),
     "Track Package (" & TrackingNumber & ")",
@@ -297,7 +297,7 @@ The precise retry counts, delay caps, queue retention, paging/reconciliation win
 - Whether standard Shipment Tracking can display each Shipment and whether formula links are usable in the buyer LWR surface; validate with a suitable synthetic fixture.
 - Safe handling of `Other`/untrusted URLs, carrier corrections, shipment replacement/void, overwrites across Job A/B, source-vs-Salesforce precedence, retention and security review.
 
-Sources: Salesforce Shipment fields, OrderSummary object, sObject Collections upsert, CustomField, LWR Store Components, Order Data Expressions, OAuth client credentials. Some Salesforce pages are JS-rendered; the linked object and collection references were retrieved via searchable official excerpts and local Salesforce schema references. Target-org capability and actual carrier API behavior remain unverified.
+Sources: [Shipment object](https://developer.salesforce.com/docs/platform/object-reference/references/standard-objects/object-shipment.html), [sObject Collections upsert](https://developer.salesforce.com/docs/platform/api-rest/guide/resources-composite-sobjects-collections-upsert.html), [CustomField metadata](https://developer.salesforce.com/docs/platform/api-metadata/references/meta-types/metadata-customfield.html), and [FedEx tracking](https://developer.fedex.com/api/en-us/catalog/track/v1/docs.html). Some Salesforce pages are JS-rendered; the linked object and collection references were retrieved via searchable official excerpts and local Salesforce schema references. Target-org capability and actual carrier API behavior remain unverified.
 
 ## 11. Full specification reconciliation — Job B and request budget
 
@@ -318,3 +318,23 @@ US carriers are UPS, FedEx and USPS. Run Job A at 07:00 and 19:00, Job B at 07:1
 ## Current decisions
 
 Initial US carriers: UPS, FedEx and USPS. Jobs use Eastern Time (`America/New_York`). Store the tracking link on the Shipment record subject to target-org field validation; buyers see their own shipments under Salesforce access rules. Client and instance-specific context is excluded from this file. The earlier revision 0.1 review predates these decisions; a later sanitized-document review is recorded in the story. Runtime verification remains NOT RUN.
+
+## Public source reference index
+
+These public source references are retained for traceability. Retrieval and applicability to the selected version and org must be checked before implementation; linking does not prove support.
+
+- [1](https://developer.salesforce.com/docs/platform/object-reference/references/standard-objects/object-shipment.html)
+- [2](https://developer.salesforce.com/docs/platform/field-reference/references/field-reference/salesforce-field-reference-shipment.html)
+- [3](https://developer.salesforce.com/docs/platform/object-reference/references/standard-objects/object-ordersummary.html)
+- [4](https://help.salesforce.com/s/articleView?id=commerce.comm_components.htm&language=en_US&type=5)
+- [5](https://help.salesforce.com/s/articleView?id=commerce.comm_components_expressions_order.htm&language=en_US&type=5)
+- [6](https://developer.salesforce.com/docs/platform/api-metadata/references/meta-types/metadata-customfield.html)
+- [7](https://help.salesforce.com/s/articleView?id=sf.custom_field_attributes.htm&language=en_US&type=5)
+- [8](https://help.salesforce.com/s/articleView?id=platform.customize_functions_urlencode.htm&language=en_US&type=5)
+- [9](https://help.salesforce.com/s/articleView?id=platform.customize_functions_hyperlink.htm&language=en_US&type=5)
+- [10](https://help.salesforce.com/s/articleView?id=platform.customize_functions_text.htm&language=en_US&type=5)
+- [11](https://help.salesforce.com/s/articleView?id=sf.remoteaccess_oauth_client_credentials_flow.htm&type=5)
+- [12](https://developer.salesforce.com/docs/platform/api-rest/guide/resources-composite-sobjects-collections-upsert.html)
+- [13](https://help.salesforce.com/s/articleView?id=commerce.om_shipment_fields.htm&language=en_US&type=5)
+- [14](https://developer.fedex.com/api/en-us/catalog/track/v1/docs.html)
+- [15](https://docs.karrio.io/)
