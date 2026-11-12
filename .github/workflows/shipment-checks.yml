@@ -1,0 +1,17 @@
+name: Shipment code checks
+
+on: [pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.14']
+    uses: aispanda/Reusable-Delivery/.github/workflows/python-checks.yml@a6800b03dd76a53f3c83004986829fa5a8676ade
+    with:
+      python-version: ${{ matrix.python-version }}
+      working-directory: poc
