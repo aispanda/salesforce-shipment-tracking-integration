@@ -22,6 +22,8 @@ class Ledger:
             PRIMARY KEY (package_id, revision))''')
         self.db.execute('''CREATE TABLE IF NOT EXISTS checkpoints (
             source TEXT PRIMARY KEY, cursor TEXT, complete INTEGER NOT NULL DEFAULT 0)''')
+        self.db.execute('''CREATE TABLE IF NOT EXISTS seen_cursors (
+            source TEXT NOT NULL, cursor TEXT NOT NULL, PRIMARY KEY (source, cursor))''')
         self.db.commit()
 
     def stage(self, package_id, revision, payload):
@@ -50,6 +52,13 @@ class Ledger:
         try:
             if self.checkpoint(source) != (expected_cursor, False):
                 raise ValueError('checkpoint changed; reload before retry')
+            # Seed an existing pre-upgrade checkpoint; older cursor history is unavailable.
+            if expected_cursor is not None:
+                self.db.execute('INSERT OR IGNORE INTO seen_cursors(source, cursor) VALUES (?, ?)', (source, expected_cursor))
+            if next_cursor is not None:
+                if self.db.execute('SELECT 1 FROM seen_cursors WHERE source=? AND cursor=?', (source, next_cursor)).fetchone():
+                    raise ValueError('repeated cursor')
+                self.db.execute('INSERT INTO seen_cursors(source, cursor) VALUES (?, ?)', (source, next_cursor))
             for package_id, revision, value in values:
                 self._stage_value(package_id, revision, value)
             self.db.execute('''INSERT INTO checkpoints(source, cursor, complete) VALUES (?, ?, ?)

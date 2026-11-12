@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+from types import MappingProxyType
 from pathlib import Path
 from shipment_poc.core import Ledger
 from shipment_poc.pipeline import stage_pages, stage_records
@@ -9,6 +10,21 @@ class FakeSource:
     def read(self): return iter(self.items)
 
 class PipelineTest(unittest.TestCase):
+    def test_both_adapters_accept_mapping_records(self):
+        class Page:
+            def fetch_page(self, cursor):
+                return ([MappingProxyType({'package_id': 'b', 'revision': '1', 'payload': {'x': 2}})], None)
+
+        with tempfile.TemporaryDirectory() as d:
+            ledger = Ledger(Path(d) / 'ledger.db')
+            try:
+                record = MappingProxyType({'package_id': 'a', 'revision': '1', 'payload': {'x': 1}})
+                self.assertEqual(stage_records(FakeSource([record]), ledger, source_id='one'), 1)
+                self.assertTrue(stage_pages('two', Page(), ledger))
+                self.assertEqual(len(ledger.pending()), 2)
+            finally:
+                ledger.close()
+
     def test_unpaged_source_identity_isolation_and_replay(self):
         with tempfile.TemporaryDirectory() as d:
             ledger = Ledger(Path(d) / 'ledger.db')
