@@ -1,0 +1,18 @@
+.env
+.env.*
+!.env.example
+config/local.*
+secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+*.log
+data/
+*.sqlite*
+__pycache__/
+.venv/
+node_modules/
+
+# Project-specific context remains local
+config/local-context.md
