@@ -2,7 +2,7 @@
 
 Guide upgrade: original `d486dcf684f12fd911c06d2ec2b680d66a4aac3e` → `4d0155830d0adf0cc214a466dbfa7fb22af1a096`, route MIGRATE. Entry, route and core were read in full at the new commit. Changes emphasize traceable delegated authority, artifact/link mapping, portable restricted retrieval, cross-document state reconciliation, and verified transition before labeling old locations historical. Prior work remains historical; affected preservation, retrieval, state and cutover checks remain open. Its prior guide SHA is not applicable: the prior story used the ClickUp Markdown template v1.3 and Field Guide v1, not a commit-pinned delivery guide.
 
-This local package is derived from the prior sanitized draft. The dedicated repository was created after the user confirmed the separate repository request; public visibility was authorized and verified on GitHub. Publication and readback are recorded separately; do not infer completion from repository creation. The existing draft PR and its sources remain unchanged. ClickUp synchronization is pending publication, access-controlled capture of its current full description, and refresh/reconciliation before replacement. Previous attachments remain historical. An ignored local file is not itself approved restricted storage. Access-controlled storage owner and retrieval procedure: Pending.
+This local package is derived from the prior sanitized draft. The dedicated repository was created after the user confirmed the separate repository request; public visibility was authorized and verified on GitHub. Publication and readback are recorded separately; do not infer completion from repository creation. The existing draft PR and its sources remain unchanged. ClickUp synchronization is pending access-controlled capture of its current full description, and refresh/reconciliation before replacement. Previous attachments remain historical. An ignored local file is not itself approved restricted storage. Access-controlled storage owner and retrieval procedure: Pending.
 
 ## Criteria comparison and reconciliation needed
 
@@ -28,7 +28,7 @@ This file is a working migration record; it does not claim migration completion,
 | Existing task description and source story | [Story](story/user-story.md) | IDs AC-01–07 restored from captured task wording; AC-08 proposed. Full independent comparison and intervening edits Pending. Original remains in ClickUp. |
 | Backlog and technical design | [Technical design](research/technical-design.md), [plan](docs/implementation-plan.md) | Sanitized draft retained; complete source-by-source comparison Pending. |
 | Research and component discovery | [Research notes](research/design-notes.md) | Sanitized synthesis; primary source references and org-specific observations require verification and restricted provenance. |
-| Test plans and earlier review | [Verification matrix](research/verification-matrix.md), story review section | Tests NOT RUN. Earlier focused review retained as historical; revised requirements recheck Pending. Raw reports remain in original sources. |
+| Test plans and earlier review | [Verification matrix](research/verification-matrix.md), story review section | Tests NOT RUN. The focused review of the sanitized revision is recorded in the story; review of later material changes remains Pending as applicable. Raw reports remain in original sources. |
 | Separate demonstration | Story scope and research notes | Distinct post-MVP scope; not evidence of the integration. Original source remains in place. |
 | Existing prior draft package | Prior private draft remains unchanged; this package supersedes it only as a migration draft | No deletion or merge performed. |
 
@@ -43,3 +43,15 @@ The technical design section 11 explicitly says a 15-minute offset is not proof 
 ## Additional original-story comparison
 
 A maker comparison against the locally available revision 0.1 story identified further detail beyond the shorter captured ClickUp description: AC-02 explicitly names the two dispatch times and recovery of missing/ambiguous records; AC-03 includes terminal rechecks and changed-only writes; AC-04 includes recovery/token handling in accounting; AC-05 explicitly names cursors and safe diagnostics; AC-07 names per-record errors and durable evidence. These details appear in the solution/design or verification material in varying form, but have not all been independently traced scenario-by-scenario to their source backlog. Preserve them as applicable requirements, do not infer that the shorter wording waives them. The later clarification supplies the Eastern timezone and initial carriers. Full backlog and current remote description comparison still Pending.
+
+## Accessible backlog mapping (maker comparison)
+
+| Source section | Destination and retained concern |
+|---|---|
+| A1–A3: model, identity, security | Story AC-01/07; technical design model/security sections; verification matrix: permissions, unique key, parent resolution and account isolation. |
+| B1–B3: extraction, upsert, recovery | Story AC-02/05; technical design staging, cursors, collections and retry sections; verification matrix replay, partial results and timeouts. |
+| C1–C2: carrier events and buyer UI | Story AC-03/06; technical design carrier and storefront sections; matrix stale events, isolation and multiple shipments. |
+| C3–C4: deltas, five-request target, alert details | Story AC-03–05; technical design budget and alert sections; matrix request target and partial failures. |
+| Cross-story DoD | Story AC-07 and design operational handoff; environment tests, evidence, runbook and owner decisions remain NOT RUN/Pending. |
+
+This is a thematic maker mapping of the accessible backlog, not a scenario-by-scenario independent audit or proof that all original source chats and attachments were captured. ClickUp's public-link toggle is off, but task sharing is inherited rather than verified private. A restricted snapshot and intended-reader access must be verified before replacing the description. The original task and three attachments remain intact.
