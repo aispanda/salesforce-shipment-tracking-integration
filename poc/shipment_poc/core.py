@@ -88,3 +88,21 @@ def collection_chunks(records, size=200):
             batch = []
     if batch:
         yield batch
+
+
+def reconcile_results(ledger, identities, results):
+    """Record a complete, position-matched synthetic batch atomically."""
+    if len(identities) != len(results) or len(set(identities)) != len(identities):
+        raise ValueError('results must uniquely match every submitted record')
+    for result in results:
+        if not isinstance(result, dict) or type(result.get('success')) is not bool:
+            raise ValueError('missing or invalid success flag')
+        if not result['success'] and not isinstance(result.get('error'), str):
+            raise ValueError('failed result requires an error code')
+    with ledger.db:
+        for (package_id, revision), result in zip(identities, results):
+            state = 'complete' if result['success'] else 'pending'
+            error = None if result['success'] else result['error']
+            cursor = ledger.db.execute("UPDATE work SET state=?, error=? WHERE package_id=? AND revision=? AND state='pending'", (state, error, package_id, revision))
+            if cursor.rowcount != 1:
+                raise ValueError('record missing or no longer pending')
