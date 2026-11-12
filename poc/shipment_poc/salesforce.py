@@ -16,6 +16,17 @@ def _valid_id(value):
     return isinstance(value, str) and bool(re.fullmatch(r'[A-Za-z0-9]{15}(?:[A-Za-z0-9]{3})?', value))
 
 
+def _canonical_id(value):
+    if not _valid_id(value):
+        raise ValueError('invalid Salesforce ID')
+    if len(value) == 15:
+        alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ012345'
+        suffix = ''.join(alphabet[sum(1 << i for i, char in enumerate(value[j:j + 5]) if char.isupper())]
+                         for j in (0, 5, 10))
+        value += suffix
+    return value.lower()
+
+
 class SalesforceClient:
     def __init__(self, instance_url, access_token, *, api_version='61.0', opener=None):
         url = urlsplit(instance_url)
@@ -45,8 +56,9 @@ class SalesforceClient:
             raise SalesforceRequestError(f'Salesforce request failed ({type(exc).__name__})') from None
 
     def read_shipments(self, ids):
-        if not isinstance(ids, list) or not 1 <= len(ids) <= 200 or any(not _valid_id(i) for i in ids) or len(ids) != len(set(ids)):
+        if not isinstance(ids, list) or not 1 <= len(ids) <= 200 or any(not _valid_id(i) for i in ids) or len(ids) != len({_canonical_id(i) for i in ids}):
             raise ValueError('supply 1 to 200 distinct Salesforce IDs')
+        allowed_ids = {_canonical_id(i) for i in ids}
         soql = 'SELECT Id, TrackingNumber, TrackingUrl, Provider, Status, OrderSummaryId FROM Shipment WHERE Id IN (' + ','.join("'" + i + "'" for i in ids) + ')'
         path = self._root + '/query?' + urlencode({'q': soql})
         seen, records, record_ids = set(), [], set()
@@ -58,9 +70,10 @@ class SalesforceClient:
             if not isinstance(result, dict) or type(result.get('done')) is not bool or not isinstance(result.get('records'), list):
                 raise SalesforceRequestError('invalid Salesforce page')
             for record in result['records']:
-                if not isinstance(record, dict) or record.get('Id') not in ids or record['Id'] in record_ids:
+                if (not isinstance(record, dict) or not _valid_id(record.get('Id'))
+                        or _canonical_id(record['Id']) not in allowed_ids or _canonical_id(record['Id']) in record_ids):
                     raise SalesforceRequestError('unexpected or duplicated Salesforce record')
-                record_ids.add(record['Id'])
+                record_ids.add(_canonical_id(record['Id']))
                 records.append(record)
             if result['done']:
                 return records
@@ -73,7 +86,7 @@ class SalesforceClient:
         if (not isinstance(changes, list) or not 1 <= len(changes) <= 200
                 or any(not isinstance(c, dict) or set(c) != {'Id', 'Status'} or not _valid_id(c['Id'])
                        or c['Status'] not in {'In Transit', 'Delivered'} for c in changes)
-                or len({c['Id'] for c in changes}) != len(changes)):
+                or len({_canonical_id(c['Id']) for c in changes}) != len(changes)):
             raise ValueError('invalid or duplicate Shipment status changes')
         payload = {'allOrNone': False, 'records': [{'attributes': {'type': 'Shipment'}, **c} for c in changes]}
         result = self._request(self._root + '/composite/sobjects', 'PATCH', payload)
@@ -81,8 +94,13 @@ class SalesforceClient:
             raise SalesforceRequestError('incomplete Salesforce results; reconcile before retry')
         outcomes = []
         for change, item in zip(changes, result):
-            if (not isinstance(item, dict) or item.get('id') != change['Id']
-                    or type(item.get('success')) is not bool or not isinstance(item.get('errors'), list)):
+            if (not isinstance(item, dict) or type(item.get('success')) is not bool
+                    or not isinstance(item.get('errors'), list)):
+                raise SalesforceRequestError('ambiguous Salesforce results; reconcile before retry')
+            result_id = item.get('id')
+            if ((result_id is None and item['success'])
+                    or (result_id is not None and (not _valid_id(result_id)
+                        or _canonical_id(result_id) != _canonical_id(change['Id'])))):
                 raise SalesforceRequestError('ambiguous Salesforce results; reconcile before retry')
             codes = []
             for error in item['errors']:
@@ -92,5 +110,5 @@ class SalesforceClient:
                 codes.append(code)
             if item['success'] == bool(codes):
                 raise SalesforceRequestError('inconsistent Salesforce result; reconcile before retry')
-            outcomes.append({'id': item['id'], 'success': item['success'], 'error_codes': codes})
+            outcomes.append({'id': change['Id'], 'success': item['success'], 'error_codes': codes})
         return outcomes

@@ -1,16 +1,23 @@
 """Restricted POC: plan or apply only confirmed USPS Delivered statuses.
 
-Apply mode is for isolated test fixtures only. No concurrency, stale-event
-reconciliation, durability, scheduling, or non-USPS adapters are provided.
+Writes are disabled until conflict protection is implemented and verified.
+No durability, scheduling, or non-USPS adapters are provided.
 """
+from shipment_poc.salesforce import _canonical_id, _valid_id
 
 
 def sync_delivered(salesforce, usps, shipment_ids, *, apply=False):
     if type(apply) is not bool:
         raise ValueError('apply must be a boolean')
+    if apply:
+        raise ValueError('Salesforce writes are disabled pending conflict protection')
+    if not isinstance(shipment_ids, list) or any(not _valid_id(i) for i in shipment_ids):
+        raise ValueError('invalid shipment allowlist')
+    allowed_ids = {_canonical_id(i) for i in shipment_ids}
     records = salesforce.read_shipments(shipment_ids)
-    if (not isinstance(records, list) or any(not isinstance(r, dict) or r.get('Id') not in shipment_ids for r in records)
-            or len({r['Id'] for r in records}) != len(records)):
+    if (not isinstance(records, list) or any(not isinstance(r, dict) or not _valid_id(r.get('Id'))
+            or _canonical_id(r['Id']) not in allowed_ids for r in records)
+            or len({_canonical_id(r['Id']) for r in records}) != len(records)):
         raise ValueError('Salesforce results do not match the shipment allowlist')
     eligible = [r for r in records if r.get('Provider') == 'USPS'
                 and r.get('Status') in {'Created', 'Shipped', 'In Transit'}
@@ -27,5 +34,4 @@ def sync_delivered(salesforce, usps, shipment_ids, *, apply=False):
         by_number.update((r['trackingNumber'], r) for r in results)
     planned = [{'Id': r['Id'], 'Status': 'Delivered'} for r in eligible
                if by_number[r['TrackingNumber']].get('statusCategory') == 'Delivered']
-    outcomes = salesforce.update_statuses(planned) if apply and planned else []
-    return {'planned': planned, 'outcomes': outcomes}
+    return {'planned': planned, 'outcomes': []}

@@ -40,10 +40,22 @@ class SalesforceClientTest(unittest.TestCase):
             body = json.loads(req.data)
             self.assertFalse(body['allOrNone'])
             self.assertEqual([r['Id'] for r in body['records']], ids)
-            return Response([{'id': ids[0], 'success': True, 'errors': []}, {'id': ids[1], 'success': False, 'errors': [{'statusCode': 'INVALID_FIELD', 'message': 'private'}]}])
+            return Response([{'id': ids[0], 'success': True, 'errors': []}, {'id': None, 'success': False, 'errors': [{'statusCode': 'INVALID_FIELD', 'message': 'private'}]}])
         client = SalesforceClient('https://example.salesforce.com', 'token', opener=transport)
         outcomes = client.update_statuses([{'Id': ids[0], 'Status': 'Delivered'}, {'Id': ids[1], 'Status': 'In Transit'}])
         self.assertEqual(outcomes, [{'id': ids[0], 'success': True, 'error_codes': []}, {'id': ids[1], 'success': False, 'error_codes': ['INVALID_FIELD']}])
+
+    def test_fifteen_character_id_matches_canonical_salesforce_result(self):
+        short_id = '0OB000000000001'
+        full_id = '0OB000000000001GAA'
+        def transport(req, timeout):
+            if req.get_method() == 'GET':
+                return Response({'done': True, 'records': [{'Id': full_id}]})
+            return Response([{'id': full_id, 'success': True, 'errors': []}])
+        client = SalesforceClient('https://example.salesforce.com', 'token', opener=transport)
+        self.assertEqual(client.read_shipments([short_id])[0]['Id'], full_id)
+        self.assertEqual(client.update_statuses([{'Id': short_id, 'Status': 'Delivered'}]),
+                         [{'id': short_id, 'success': True, 'error_codes': []}])
 
 
 if __name__ == '__main__': unittest.main()

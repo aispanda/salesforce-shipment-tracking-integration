@@ -22,10 +22,15 @@ class FakeUSPS:
 
 
 class SyncTest(unittest.TestCase):
+    def test_short_id_matches_salesforce_canonical_id(self):
+        sf = FakeSalesforce([{'Id': '0OB000000000001GAA', 'Provider': 'USPS', 'TrackingNumber': 'EXAMPLE01', 'Status': 'Shipped'}])
+        result = sync_delivered(sf, FakeUSPS(), ['0OB000000000001'])
+        self.assertEqual(result['planned'][0]['Id'], '0OB000000000001GAA')
+
     def test_rejects_records_outside_the_explicit_allowlist(self):
         sf = FakeSalesforce([{'Id': '0OB000000000999AAA', 'Provider': 'USPS', 'TrackingNumber': 'EXAMPLE01', 'Status': 'Shipped'}])
         with self.assertRaises(ValueError):
-            sync_delivered(sf, FakeUSPS(), ['0OB000000000001AAA'], apply=True)
+            sync_delivered(sf, FakeUSPS(), ['0OB000000000001AAA'])
         self.assertEqual(sf.writes, [])
 
     def test_dry_run_plans_delivered_status_without_writing(self):
@@ -34,7 +39,7 @@ class SyncTest(unittest.TestCase):
         self.assertEqual(result['planned'], [{'Id': '0OB000000000001AAA', 'Status': 'Delivered'}])
         self.assertEqual(sf.writes, [])
 
-    def test_apply_updates_only_matching_eligible_usps_records(self):
+    def test_apply_is_disabled_until_atomic_conflict_protection_is_verified(self):
         records = [
             {'Id': '0OB000000000001AAA', 'Provider': 'USPS', 'TrackingNumber': 'EXAMPLE01', 'Status': 'Shipped'},
             {'Id': '0OB000000000002AAA', 'Provider': 'USPS', 'TrackingNumber': 'EXAMPLE02', 'Status': 'Shipped'},
@@ -42,9 +47,9 @@ class SyncTest(unittest.TestCase):
             {'Id': '0OB000000000004AAA', 'Provider': 'UPS', 'TrackingNumber': 'EXAMPLE01', 'Status': 'Shipped'},
         ]
         sf = FakeSalesforce(records)
-        result = sync_delivered(sf, FakeUSPS(), [r['Id'] for r in records], apply=True)
-        self.assertEqual(sf.writes, [{'Id': '0OB000000000001AAA', 'Status': 'Delivered'}])
-        self.assertEqual(len(result['outcomes']), 1)
+        with self.assertRaisesRegex(ValueError, 'disabled'):
+            sync_delivered(sf, FakeUSPS(), [r['Id'] for r in records], apply=True)
+        self.assertEqual(sf.writes, [])
 
 
 if __name__ == '__main__': unittest.main()
