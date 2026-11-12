@@ -18,14 +18,28 @@ The USPS client obtains an OAuth token and posts up to 35 distinct tracking numb
 
 The Salesforce client accepts a separately supplied instance URL and token and exposes bounded reads by explicit Shipment IDs and status updates of up to 200 records. It follows only same-origin query locators and reports individual write outcomes without error messages. It has only synthetic tests, has not been run against a Salesforce org, and does not resolve concurrent changes or ambiguous writes. Do not use it to update real records until authorization, field ownership, ordering, reconciliation and the end-to-end workflow are verified.
 
-`sync_delivered` joins the two clients for explicitly supplied test Shipment IDs. It only plans transitions to Delivered for eligible USPS records; unsupported and unknown statuses are skipped. Workflow writes are disabled until concurrency protection is implemented and verified. The workflow has synthetic tests but no live Salesforce verification, durable reconciliation or recurring schedule. UPS and FedEx simulations are not yet connected.
+`sync_delivered` joins the two clients for explicitly supplied test Shipment IDs. It only plans transitions to Delivered for eligible USPS records; unsupported and unknown statuses are skipped. Workflow writes are disabled until concurrency protection is implemented and verified. The workflow has synthetic tests but no live Salesforce verification, durable reconciliation or recurring schedule. UPS and FedEx fixtures can be selected through an explicit simulation configuration; simulated plans are returned separately from live plans.
 
 
 ## Offline carrier and polling examples
 
-`shipment_poc.simulation.SimulatedCarrier` returns only explicitly supplied UPS or FedEx fixture statuses, labels every response `simulated: true`, and rejects missing fixtures. These are illustrative normalized values, not carrier API schemas or approved mappings, and are not yet connected to the Salesforce workflow. No carrier is contacted.
+`shipment_poc.simulation.SimulatedCarrier` returns only explicitly supplied UPS or FedEx fixture statuses, labels every response `simulated: true`, and rejects missing fixtures. These are illustrative normalized values, not carrier API schemas or approved mappings, and are used by the planning workflow only when an explicit simulation configuration is supplied. That branch does not call the live USPS client and returns labeled `simulated_plans` separately from `planned`. No carrier is contacted. Fixture selection is source-scoped, but this is not an authorization boundary: callers must independently scope shipment records and access.
 
 `shipment_poc.simulation.polling_windows` calculates the proposed 07:15 and 19:15 America/New_York polling times for a calendar date and returns UTC instants. It requires IANA time-zone data accessible to Python (on systems without it, install the `tzdata` package). It does not schedule or run anything. Missed-run behavior, overlap, readiness and deployment remain undecided and untested.
+
+Run the fully local example from `poc/`:
+
+```sh
+python3 -m shipment_poc.simulate_run --simulate --day 2026-11-01
+```
+
+The command uses hard-coded synthetic shipment records and fixtures and prints the calculated UTC windows, labeled simulated plans, and zero writes. It makes no network requests. It does not start a scheduler; real scheduling, missed-run behavior, retries, and multi-run coordination still need a design and authorization. Do not treat fixture values as carrier status mappings.
+
+The workflow simulation configuration requires `mode: simulation`, a selected `source`, and a `sources` map containing that source's UPS/FedEx fixtures. A missing source, carrier fixture or tracking fixture fails instead of falling back to live APIs. The Salesforce reader passed to the workflow can still perform reads; the example passes an in-memory reader. Access isolation for real readers and data is unverified. Applying changes is disabled for both paths.
+
+### Guarded-write proof still required
+
+The smallest useful sandbox proof needs explicitly authorized, clearly labeled disposable Shipment records and a test identity with only the required read/update access; keep their IDs and environment values outside Git. Confirm the conditional header actually reaches the target API, then read a fixture, change it with a separate authorized writer, and attempt an update using the stale condition. Observe whether the stale update is rejected and the intervening change preserved. Repeat with unchanged data, rapid same-second changes and failure/rollback cases; verify per-record outcomes, partial failure and the chosen batch/request budget. A simple rejected stale write alone cannot establish strong concurrency safety, especially because Salesforce documents timestamp validation as weak and other writers may not cooperate. Reconcile all writer behavior and uncertainty before enabling writes. An Apex/Graph design, if selected, needs its own permissions, deployment and test evidence; unattended worker authentication is a separate unresolved gate. No such update proof has been run.
 
 ## Read-only developer check
 
