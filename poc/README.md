@@ -19,3 +19,14 @@ The USPS client obtains an OAuth token and posts up to 35 distinct tracking numb
 The Salesforce client accepts a separately supplied instance URL and token and exposes bounded reads by explicit Shipment IDs and status updates of up to 200 records. It follows only same-origin query locators and reports individual write outcomes without error messages. It has only synthetic tests, has not been run against a Salesforce org, and does not resolve concurrent changes or ambiguous writes. Do not use it to update real records until authorization, field ownership, ordering, reconciliation and the end-to-end workflow are verified.
 
 `sync_delivered` joins the two clients for explicitly supplied test Shipment IDs. It only plans transitions to Delivered for eligible USPS records; unsupported and unknown statuses are skipped. Workflow writes are disabled until concurrency protection is implemented and verified. The workflow has synthetic tests but no live Salesforce verification, durable reconciliation or recurring schedule. UPS and FedEx simulations are not yet connected.
+
+## Read-only developer check
+
+This optional check uses an authenticated Salesforce CLI session as the developer's identity, reads one explicitly configured USPS test Shipment, asks USPS for its current status, and compares the two. It makes no Salesforce writes. It is a development verification aid, not an unattended worker or a buyer-access test. Obtain authorization for the org, fixture and carrier query before running it.
+
+1. Install Python 3.11+ and Salesforce CLI; authenticate the CLI to the intended development org under an appropriate user. Verify the org and test record access before proceeding.
+2. Outside the repository, create a private USPS credentials JSON with `consumer_key` and `consumer_secret` values from the authorized USPS app. On POSIX systems restrict the file to its owner (`chmod 600`). Never commit it or print its contents.
+3. Copy `dev-check.example.json` to a private path outside the repository. Set the Salesforce CLI executable, authenticated org alias, approved USPS test Shipment ID and private USPS credentials path. If `sf` is not on your PATH, configure its actual executable path locally. Keep the configuration out of Git.
+4. From `poc/`, run `python3 -m shipment_poc.dev_check --config /path/to/private/dev-check.json`. The output reports Salesforce and USPS status, whether they match, and `writes: 0`. A match does not prove that this code performed an update or that buyers can see the shipment.
+
+The check contacts the USPS production API and uses the permissions of the authenticated CLI user. Dedicated worker OAuth, unattended operation, status mapping, guarded writes, recovery, and clean deployment into an empty org remain unverified.
