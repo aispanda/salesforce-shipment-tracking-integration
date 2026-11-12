@@ -36,7 +36,7 @@ class PagingTest(unittest.TestCase):
             self.assertEqual(source.calls, [None, 'next'])
             ledger.close()
 
-    def test_bad_record_rolls_back_entire_page_and_checkpoint(self):
+    def test_bad_record_is_rejected_before_staging_or_checkpoint(self):
         with tempfile.TemporaryDirectory() as directory:
             ledger = Ledger(Path(directory) / 'state.db')
             bad = Pages({None: ([item('a'), {'package_id': 'bad'}], 'next')})

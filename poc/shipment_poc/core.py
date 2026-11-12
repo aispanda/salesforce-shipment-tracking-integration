@@ -62,9 +62,12 @@ class Ledger:
 
     def _set_state(self, package_id, revision, state, error):
         with self.db:
-            cursor = self.db.execute('UPDATE work SET state=?, error=? WHERE package_id=? AND revision=?', (state, error, package_id, revision))
+            cursor = self.db.execute("UPDATE work SET state=?, error=? WHERE package_id=? AND revision=? AND (state='pending' OR ?='complete')", (state, error, package_id, revision, state))
             if cursor.rowcount != 1:
-                raise KeyError((package_id, revision))
+                existing = self.db.execute('SELECT state FROM work WHERE package_id=? AND revision=?', (package_id, revision)).fetchone()
+                if existing is None:
+                    raise KeyError((package_id, revision))
+                raise ValueError('completed work cannot be reopened by a failure')
 
     def complete(self, package_id, revision):
         self._set_state(package_id, revision, 'complete', None)

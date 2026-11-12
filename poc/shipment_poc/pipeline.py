@@ -1,5 +1,6 @@
 """Offline source adapter experiment; this module performs no writes to external systems."""
 from typing import Iterable, Mapping, Protocol
+from shipment_poc.core import package_key
 
 
 class SourceAdapter(Protocol):
@@ -18,15 +19,17 @@ def _validate_record(record):
         raise ValueError('invalid source record')
 
 
-def stage_records(source: SourceAdapter, ledger) -> int:
+def stage_records(source: SourceAdapter, ledger, *, source_id: str) -> int:
     """Stage source records individually; cursor/checkpoint management is not implemented.
 
     On error earlier records may remain staged; callers must inspect/replay safely.
     """
+    if not isinstance(source_id, str) or not source_id.strip():
+        raise ValueError('source id is required')
     count = 0
     for record in source.read():
         _validate_record(record)
-        ledger.stage(record['package_id'], record['revision'], record['payload'])
+        ledger.stage(package_key(source_id, 'synthetic', record['package_id']), record['revision'], record['payload'])
         count += 1
     return count
 

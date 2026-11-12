@@ -4,6 +4,21 @@ from pathlib import Path
 from shipment_poc.core import Ledger, package_key
 
 class CoreTest(unittest.TestCase):
+    def test_late_failure_cannot_reopen_completed_work(self):
+        with tempfile.TemporaryDirectory() as d:
+            ledger = Ledger(Path(d) / 'ledger.db')
+            try:
+                ledger.stage('p', '1', {'x': 1})
+                ledger.complete('p', '1')
+                ledger.complete('p', '1')  # Repeated completion remains idempotent.
+                with self.assertRaises(ValueError):
+                    ledger.fail('p', '1', 'LATE_FAILURE')
+                self.assertEqual(ledger.pending(), [])
+                with self.assertRaises(KeyError):
+                    ledger.fail('missing', '1', 'ERROR')
+            finally:
+                ledger.close()
+
     def test_identity_is_unambiguous_and_case_sensitive(self):
         self.assertNotEqual(package_key('ab', 'c', 'p'), package_key('a', 'bc', 'p'))
         self.assertNotEqual(package_key('src', 'tenant', 'P'), package_key('src', 'tenant', 'p'))
@@ -66,6 +81,21 @@ class CollectionTest(unittest.TestCase):
             with self.assertRaises(ValueError): list(collection_chunks([1], n))
 
 class BatchResultTest(unittest.TestCase):
+    def test_later_missing_result_rolls_back_earlier_update(self):
+        from shipment_poc.core import reconcile_results
+        with tempfile.TemporaryDirectory() as d:
+            ledger = Ledger(Path(d) / 'ledger.db')
+            try:
+                ledger.stage('a', '1', {'x': 1})
+                ledger.fail('a', '1', 'ORIGINAL')
+                before = ledger.pending()
+                with self.assertRaises(ValueError):
+                    reconcile_results(ledger, [('a', '1'), ('missing', '1')],
+                                      [{'success': True}, {'success': True}])
+                self.assertEqual(ledger.pending(), before)
+            finally:
+                ledger.close()
+
     def test_mixed_results_preserve_failure(self):
         from shipment_poc.core import reconcile_results
         with tempfile.TemporaryDirectory() as d:
