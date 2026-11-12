@@ -1,6 +1,6 @@
 # Low-level technical design: B2B shipment tracking, twice daily
 
-**Status:** architecture draft for review, 11 November 2026. **Scope:** the complete originating specification includes both batch jobs, carrier options, storefront exposure and non-functional requirements. Exact ERP/carrier contracts, source IDs, schedule time zone, security model, middleware and operational SLAs remain unverified. The detailed implementation is a proposal. Section 11 reconciles the recovered requirements. The companion delivery story has epics, acceptance criteria and definitions of done. The design is a proposal; implementation and acceptance are NOT RUN.
+**Status:** architecture draft for review, 11 November 2026. **Scope:** the complete originating specification includes both batch jobs, carrier options, storefront exposure and non-functional requirements. Exact ERP/carrier contracts, source IDs, DST and missed-run behavior, security model, middleware and operational SLAs remain unverified. The detailed implementation is a proposal. Section 11 reconciles the recovered requirements. The companion delivery story has epics, acceptance criteria and definitions of done. The design is a proposal; implementation and acceptance are NOT RUN.
 
 ## 1. Goals, boundaries and decisions
 
@@ -290,7 +290,7 @@ The precise retry counts, delay caps, queue retention, paging/reconciliation win
 ## 10. Open decisions and source evidence
 
 - Initial carriers are UPS, FedEx and USPS. Exact API contracts and approved status mappings remain pending.
-- Exact timezone, DST/missed-run semantics; ERP and carrier adapter/provider, volume, SLA, retention and escalation channel.
+- DST/missed-run semantics; ERP and carrier adapter/provider, volume, SLA, retention and escalation channel.
 - Immutable ERP package ID contract; whether ERP reference is the original Order number, summary number, Salesforce ID, or separate crosswalk; uniqueness across stores/accounts and handling late arrivals.
 - Order-only mode feasibility; whether excluding FulfillmentOrder/ShipmentItem is acceptable for required line-level fulfillment visibility.
 - Verified target-org picklist API values, ship-date field, custom-field deployability, formula carrier patterns, permissions, sharing and integration app configuration.
