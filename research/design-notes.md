@@ -4,7 +4,7 @@ This is a sanitized synthesis of the MVP backlog, low-level design and earlier c
 
 ## Current POC scope
 
-Salesforce Shipment records are the source for this POC; ERP ingestion is deferred. USPS is the intended live carrier, with UPS and FedEx simulated. A USPS website lookup has been checked manually; authenticated API use, automatic synchronization and buyer access remain unverified. Consult the [current story](../story/user-story.md) for progress.
+Salesforce Shipment records are the source for this POC; ERP ingestion is deferred. USPS is the intended live carrier, with UPS and FedEx simulated. A USPS lookup was checked manually and by one authenticated live API call. Automatic Salesforce synchronization and buyer access remain unverified. Consult the [current story](../story/user-story.md) for progress.
 
 ## Observations and limitations
 
