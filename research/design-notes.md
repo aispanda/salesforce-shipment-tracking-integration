@@ -13,4 +13,4 @@ This is a sanitized synthesis of the MVP backlog, low-level design and earlier c
 
 ## Evidence and review scope
 
-Source-specific observation links and identifiers remain in ignored local context. The prior decision-model review covered selected story text only, not live records or implementation. Requirements changed after that review, so a targeted recheck is Pending. Separate demo and split-fulfillment research are background; they do not establish the POC's implementation or acceptance.
+Source-specific observation links and identifiers remain in the original restricted sources; an approved retrievable index and access owner are Pending. An ignored local pointer alone is not secure storage. The prior decision-model review covered selected story text only, not live records or implementation. Requirements changed after that review, so a targeted recheck is Pending. Separate demo and split-fulfillment research are background; they do not establish the POC's implementation or acceptance.
