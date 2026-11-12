@@ -1,6 +1,6 @@
 # Migration record — draft
 
-Guide revision: d486dcf684f12fd911c06d2ec2b680d66a4aac3e, route MIGRATE. The guide was read at this single commit. Its prior guide SHA is not applicable: the prior story used the ClickUp Markdown template v1.3 and Field Guide v1, not a commit-pinned delivery guide.
+Guide upgrade: original `d486dcf684f12fd911c06d2ec2b680d66a4aac3e` → `4d0155830d0adf0cc214a466dbfa7fb22af1a096`, route MIGRATE. Entry, route and core were read in full at the new commit. Changes emphasize traceable delegated authority, artifact/link mapping, portable restricted retrieval, cross-document state reconciliation, and verified transition before labeling old locations historical. Prior work remains historical; affected preservation, retrieval, state and cutover checks remain open. Its prior guide SHA is not applicable: the prior story used the ClickUp Markdown template v1.3 and Field Guide v1, not a commit-pinned delivery guide.
 
 This local package is derived from the prior sanitized draft. The dedicated repository was created after the user confirmed the separate repository request; public visibility was authorized and verified on GitHub. Publication and readback are recorded separately; do not infer completion from repository creation. The existing draft PR and its sources remain unchanged. ClickUp synchronization is pending publication, access-controlled capture of its current full description, and refresh/reconciliation before replacement. Previous attachments remain historical. An ignored local file is not itself approved restricted storage. Access-controlled storage owner and retrieval procedure: Pending.
 
@@ -10,7 +10,7 @@ The source ClickUp story contains AC-01–07, plus proposed AC-08, all NOT RUN. 
 
 ## Retained scope and history
 
-US carriers UPS, FedEx and USPS; Job A 07:00/19:00 and Job B 07:15/19:15 America/New_York; Salesforce Shipment link and buyer access checks. The separate fictional demo remains outside this MVP. An earlier Jev review covered selected 0.1 material; it is historical, and the later revision has not received that recheck. Documentation exists; implementation, independent verification and acceptance NOT RUN. Prior attachments and source files remain in place.
+US carriers UPS, FedEx and USPS; Job A 07:00/19:00 and Job B 07:15/19:15 America/New_York; Salesforce Shipment link and buyer access checks. The separate fictional demo remains outside this MVP. An earlier Jev review covered selected 0.1 material. A later Jev review covered sanitized shipment commit `a2c1507cb6a666157f5559fa3080bd916569eed9` and guide commit `17b15285f1d9ded1b95edd71f79182277cfdd621`; source originals and live systems were excluded. See the linked review in the story; source preservation, restricted retrieval and ClickUp cutover remain unproven. Documentation exists; implementation, independent verification and acceptance NOT RUN. Prior attachments and source files remain in place.
 
 ## Next actions
 
@@ -35,3 +35,11 @@ This file is a working migration record; it does not claim migration completion,
 ## Private values and retrieval
 
 Client identity → project-specific organization label; Salesforce instance hostname → `SALESFORCE_LOGIN_URL`; ERP endpoint → `ERP_BASE_URL`; carrier and ERP credentials → keys in [.env.example](.env.example), populated through an approved secrets manager. These are parameter names, not actual values. Source links, field mappings, fixture identifiers and org-specific observations require a restricted source index with its access owner and retrieval procedure; both are Pending. The existing ignored local index is only a pointer to original workspace material and is not verified approved storage. A new laptop cannot yet independently retrieve that context. Never commit the mapping or real values.
+
+## Dispatch and polling inspection
+
+The technical design section 11 explicitly says a 15-minute offset is not proof that Job A finished. Section 6 proposes an explicit dependency or sequencing, but failure, overlap and missed-run semantics are Pending. The Jev result was uncertain, not a confirmed defect. Do not claim dependency handling is implemented or validated; resolve and test it during authorized implementation.
+
+## Additional original-story comparison
+
+A maker comparison against the locally available revision 0.1 story identified further detail beyond the shorter captured ClickUp description: AC-02 explicitly names the two dispatch times and recovery of missing/ambiguous records; AC-03 includes terminal rechecks and changed-only writes; AC-04 includes recovery/token handling in accounting; AC-05 explicitly names cursors and safe diagnostics; AC-07 names per-record errors and durable evidence. These details appear in the solution/design or verification material in varying form, but have not all been independently traced scenario-by-scenario to their source backlog. Preserve them as applicable requirements, do not infer that the shorter wording waives them. The later clarification supplies the Eastern timezone and initial carriers. Full backlog and current remote description comparison still Pending.
