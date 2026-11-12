@@ -65,4 +65,27 @@ class CollectionTest(unittest.TestCase):
         for n in (0, 201):
             with self.assertRaises(ValueError): list(collection_chunks([1], n))
 
+class BatchResultTest(unittest.TestCase):
+    def test_mixed_results_preserve_failure(self):
+        from shipment_poc.core import reconcile_results
+        with tempfile.TemporaryDirectory() as d:
+            ledger = Ledger(Path(d) / 'ledger.db')
+            ledger.stage('a', '1', {'x': 1})
+            ledger.stage('b', '1', {'x': 2})
+            reconcile_results(ledger, [('a', '1'), ('b', '1')], [{'success': True}, {'success': False, 'error': 'INVALID'}])
+            self.assertEqual([row['package_id'] for row in ledger.pending()], ['b'])
+            self.assertEqual(ledger.pending()[0]['error'], 'INVALID')
+            ledger.close()
+
+    def test_ambiguous_result_does_not_partially_commit(self):
+        from shipment_poc.core import reconcile_results
+        with tempfile.TemporaryDirectory() as d:
+            ledger = Ledger(Path(d) / 'ledger.db')
+            ledger.stage('a', '1', {'x': 1})
+            ledger.stage('b', '1', {'x': 2})
+            with self.assertRaises(ValueError):
+                reconcile_results(ledger, [('a', '1'), ('b', '1')], [{'success': True}])
+            self.assertEqual(len(ledger.pending()), 2)
+            ledger.close()
+
 if __name__ == '__main__': unittest.main()
