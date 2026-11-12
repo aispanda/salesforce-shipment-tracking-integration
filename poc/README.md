@@ -20,6 +20,13 @@ The Salesforce client accepts a separately supplied instance URL and token and e
 
 `sync_delivered` joins the two clients for explicitly supplied test Shipment IDs. It only plans transitions to Delivered for eligible USPS records; unsupported and unknown statuses are skipped. Workflow writes are disabled until concurrency protection is implemented and verified. The workflow has synthetic tests but no live Salesforce verification, durable reconciliation or recurring schedule. UPS and FedEx simulations are not yet connected.
 
+
+## Offline carrier and polling examples
+
+`shipment_poc.simulation.SimulatedCarrier` returns only explicitly supplied UPS or FedEx fixture statuses, labels every response `simulated: true`, and rejects missing fixtures. These are illustrative normalized values, not carrier API schemas or approved mappings, and are not yet connected to the Salesforce workflow. No carrier is contacted.
+
+`shipment_poc.simulation.polling_windows` calculates the proposed 07:15 and 19:15 America/New_York polling times for a calendar date and returns UTC instants. It requires IANA time-zone data accessible to Python (on systems without it, install the `tzdata` package). It does not schedule or run anything. Missed-run behavior, overlap, readiness and deployment remain undecided and untested.
+
 ## Read-only developer check
 
 This optional check uses an authenticated Salesforce CLI session as the developer's identity, reads one explicitly configured USPS test Shipment, asks USPS for its current status, and compares the two. It makes no Salesforce writes. It is a development verification aid, not an unattended worker or a buyer-access test. Obtain authorization for the org, fixture and carrier query before running it.
