@@ -19,3 +19,7 @@ This matrix defines future tests; all are NOT RUN. Use synthetic fixtures, an ap
 | Configuration | Clean checkout with synthetic configuration | No client-specific URLs, credentials or real data are committed; setup instructions identify required local values. |
 
 The actual middleware, source and carrier contracts, access model, supported UI, alert destination, retry and correction policy must be established before dependent tests can pass.
+
+## Additional source draft checks
+
+The earlier backlog proposed verifying Salesforce HTTP 200/201/204 response semantics for the selected API version, testing the storefront on mobile, and obtaining technical and business owner approval as part of its definition of done. These are preserved as source-draft intentions; no test or approval has been performed or newly agreed by this migration.
