@@ -56,7 +56,7 @@ Earlier Jev 1.14.0 reviewed selected text from revision 0.1; it did not inspect 
 
 ## Impact, authority and recovery
 
-User authorized sanitized documentation in the dedicated repository and ongoing story maintenance; public visibility was requested and GitHub identity verification is pending. No Salesforce configuration, production deployment, actual shipment or customer communication is implied. Inspect branch state and sensitive-data scan before writing. If an operation is uncertain, read the remote state before retrying. Never commit credentials, client names, org URLs or real records; ignored local files must remain outside tracked history.
+User authorized sanitized documentation in the dedicated repository and ongoing story maintenance; public visibility was authorized and verified on GitHub. No Salesforce configuration, production deployment, actual shipment or customer communication is implied. Inspect branch state and sensitive-data scan before writing. If an operation is uncertain, read the remote state before retrying. Never commit credentials, client names, org URLs or real records; ignored local files must remain outside tracked history.
 
 ## Blockers and handoff
 
