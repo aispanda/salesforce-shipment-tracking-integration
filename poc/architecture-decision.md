@@ -4,7 +4,7 @@ Status: provisional design decision; no deployment or live service contract veri
 
 ## Decision
 
-Keep the existing public-image delivery service unchanged. Continue the Python/SQLite shipment core as an isolated **offline synthetic prototype**, not as the final deployment architecture. A separate shipment worker and shared durable state are candidates, subject to identifying the actual ERP interface, middleware operations and target access. Before an environment-backed integration, confirm a supported runtime, state store, schedule, operational owner and approved source/carrier/Salesforce contracts.
+Keep the existing public-image delivery service unchanged. Continue the Python/SQLite shipment core as an isolated **offline synthetic prototype**, not as the final deployment architecture. Build toward a shared middleware foundation with separate workload modules: shipment tracking is the first new module, while image delivery remains operationally isolated. Share stable adapter contracts, configuration, observability and recovery patterns where verified; add workload-specific adapters without coupling their deployments. A separate shipment worker and shared durable state are candidates, subject to identifying the actual ERP interface, middleware operations and target access. Before an environment-backed integration, confirm a supported runtime, state store, schedule, operational owner and approved source/carrier/Salesforce contracts.
 
 ## Evidence from the existing middleware
 
@@ -25,5 +25,5 @@ Cloud Run Jobs with Cloud Scheduler are a possible later route, not an authorize
 1. Preserve the current synthetic tests and inspect which generic validation, safe-error, secret-injection and test patterns are portable; verify license and sanitize any actual code reuse.
 2. Obtain and verify the ERP source identity, pagination, cursor and order crosswalk; confirm carrier authentication, event mapping and correction behavior, and Salesforce Shipment schema/permissions.
 3. Define durable staging and replay, per-record results, reconciliation of uncertain writes, operational alerts and multi-run coordination. SQLite in this prototype establishes none of these across instances.
-4. Design and test Eastern schedules, DST/missed runs and the explicit Job A completion/readiness gate for Job B. Measure all Salesforce calls; the five-request goal remains unresolved for pagination, retries and lookups.
+4. Define workload-neutral adapter and run contracts and test a second synthetic adapter as an extension point; benchmark representative concurrency and recovery before making scale claims. Design and test Eastern schedules, DST/missed runs and the explicit Job A completion/readiness gate for Job B. Measure all Salesforce calls; the five-request goal remains unresolved for pagination, retries and lookups.
 5. Verify buyer account isolation, multiple shipments and link rendering in an authorized sandbox; execute a clean-install test and independent verification. All live checks and acceptance are NOT RUN.
