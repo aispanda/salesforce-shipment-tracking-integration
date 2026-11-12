@@ -262,6 +262,8 @@ Correlation from each position back to the durable work row is mandatory. This e
 
 The real carrier's endpoint, auth, request/response schema, polling limits, tracking links and commercial terms are pending. Never claim this envelope is the carrier's wire format.
 
+**Composite Graph candidate, research only:** Salesforce documents [up to 500 subrequests in one graph request](https://developer.salesforce.com/docs/platform/api-rest/guide/using-resources-composite-graph.html), counted as [one API call](https://developer.salesforce.com/docs/platform/api-rest/guide/resources-composite-graph.html), and links its graph subrequest to the [Composite subrequest definition](https://developer.salesforce.com/docs/platform/api-rest/guide/requests-composite.html), which documents resource-supported per-subrequest headers. This suggests an alternative worth evaluating; it does not establish that guarded Shipment updates are safe, that per-subrequest conditions behave as required in Graph, or that the five-request target is met. Test timestamp precision, graph rollback and result handling, scale, pagination, retries, actual API counts and competing writers before choosing it. The existing AC-03 collection-update requirement must also be reconciled before substituting another approach. No live Graph update has been run.
+
 ## 7. Error handling and recovery
 
 | Condition | Handling | Checkpoint / operator outcome |
