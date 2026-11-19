@@ -1,3 +1,5 @@
+> Historical snapshot of story revision 1.17. References to the “current delivery guide” below describe that revision. The current story uses the [MIGRATE guide at 2a4b77e](https://github.com/aispanda/Reusable-Delivery/blob/2a4b77e1772f4828f595d40c882e7c4f77bc4007/migrate/DELIVERY.md).
+
 # Shipment tracking integration — delivery story
 
 **Current delivery guide:** [migrate/DELIVERY.md](https://github.com/aispanda/Reusable-Delivery/blob/9d32dccc738cc544481a6da257c13d438115f122/migrate/DELIVERY.md), commit `9d32dccc738cc544481a6da257c13d438115f122`, route MIGRATE. The immediately preceding guide was `6013aedacbc1ee7c3aaee24459152ee5ff381eef`. The [previous guide](https://github.com/aispanda/Reusable-Delivery/blob/4d0155830d0adf0cc214a466dbfa7fb22af1a096/DELIVERY.md) at `4d0155830d0adf0cc214a466dbfa7fb22af1a096` governs earlier records. See the [guide upgrade and source reconciliation](../MIGRATION.md).
