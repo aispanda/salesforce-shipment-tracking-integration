@@ -78,7 +78,15 @@ A check-only validation compiled the temporary proof and passed 10 Apex tests on
 
 Existing bounded task IDs, executor assignments, dependencies, results and stop boundaries are retained in the [execution history](execution-history.md#execution-checklist). Current executor model and reasoning: not exposed; no model identity is inferred. Previously completed checks retain their original scope and do not imply overall acceptance.
 
-**Next** · S-04p.4a: verify current Salesforce access, then complete the scoped guarded-write proof on the authorized disposable fixture. Executor: Codex; exact model and reasoning not exposed. [Existing step](execution-history.md#next-step-s-04p4a--research-guarded-writes). Source reconciliation S-01 remains open independently.
+### S-04p.4b · Scoped guarded-write proof
+
+- **Goal / criteria** · Verify stale-write protection on one disposable synthetic Shipment; AC-03 and AC-07.
+- **Authority and scope** · The user approved a temporary proof in the designated development org, with an existing user and a labeled disposable fixture. Verify the current org, fixture, caller, permissions and automation before changes; retain identifiers privately.
+- **Executor** · Codex; exact model and reasoning not exposed. Independent verifier: Pending assignment.
+- **Check** · Verify authorized update, stale and same-second changes, overlapping attempts, access denial and cleanup. Record actual outcomes and evidence; all live proof cases NOT RUN.
+- **Stop** · If access, caller, fixture, write authorization or safe cleanup is unverified, stop dependent writes. Never enable the worker on the strength of check-only validation.
+
+**Next** · S-00: verify current-executor Salesforce MCP and CLI access before S-04p.4b. Executor: Codex; exact model and reasoning not exposed. [Access gate](execution-history.md#s-00--verify-platform-access-new-gate-prior-ids-unchanged). Source reconciliation S-01 remains open independently.
 
 ## Migration record
 
