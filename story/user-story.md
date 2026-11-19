@@ -54,7 +54,10 @@ The following proposed translations and stable IDs are carried verbatim from rev
 **S-04p.4a · Guarded writes pending**
 - **Goal** · Safely update only the intended shipment without overwriting a newer change.
 - **Blocker** · Earlier conditional-read results did not prove an atomic update guard; live workflow writes remain disabled.
-- **Current fix** · Complete the bounded guard investigation and verify the result before enabling writes. [Execution step](execution-history.md#next-step-s-04p4a--research-guarded-writes).
+- **Current fix** · Proposed: lock and compare the shipment in one Salesforce transaction; reject stale snapshots. Verify competing writes before enabling updates.
+- **Documentation** · [Salesforce locking statements](https://developer.salesforce.com/docs/platform/apex-dev/references/apex-dev/langcon-apex-locking-statements.html) · [Guard design, draft implementation](https://github.com/aispanda/salesforce-shipment-tracking-integration/blob/a09f219df6447c5dec232f2f80a355b86ad4c8cc/poc/guarded-write-design.md).
+
+A check-only validation compiled the temporary proof and passed 10 Apex tests on 12 November. That did not deploy it or verify competing writes, actual record locking, or worker permissions. The proof compares selected current fields; it cannot detect a change that is reversed before comparison or prevent later unguarded writes. Carrier callouts must occur before the locking transaction.
 
 **S-00w / S-04 · Runtime and worker access pending**
 - **Goal** · Run the integration reliably with authorized unattended access.
@@ -75,7 +78,7 @@ The following proposed translations and stable IDs are carried verbatim from rev
 
 Existing bounded task IDs, executor assignments, dependencies, results and stop boundaries are retained in the [execution history](execution-history.md#execution-checklist). Current executor model and reasoning: not exposed; no model identity is inferred. Previously completed checks retain their original scope and do not imply overall acceptance.
 
-**Next** · S-01: reconcile the original source and restricted mapping against this story, including the external-ID constraint; accountable owner and independent reviewer pending confirmation. [Existing step](execution-history.md#retained-migration-contract--s-01).
+**Next** · S-04p.4a: verify current Salesforce access, then complete the scoped guarded-write proof on the authorized disposable fixture. Executor: Codex; exact model and reasoning not exposed. [Existing step](execution-history.md#next-step-s-04p4a--research-guarded-writes). Source reconciliation S-01 remains open independently.
 
 ## Migration record
 
