@@ -51,6 +51,12 @@ The following proposed translations and stable IDs are carried verbatim from rev
 
 ## Material blockers
 
+**S-00 · Salesforce MCP tools unavailable in this session**
+- **Goal** · Verify MCP and CLI access to the intended org before the live proof.
+- **Blocker** · On 19 November, the Salesforce CLI read-only limits probe passed, but the registered MCP tools were absent from this session after successful login.
+- **Current fix** · Reopen the agent session, rediscover the existing Headless 360 server, then describe and run an authorized read-only probe.
+- **Documentation** · [Salesforce MCP setup and recovery](https://github.com/aispanda/Reusable-Delivery/blob/2a4b77e1772f4828f595d40c882e7c4f77bc4007/docs/salesforce-mcp.md).
+
 **S-04p.4a · Guarded writes pending**
 - **Goal** · Safely update only the intended shipment without overwriting a newer change.
 - **Blocker** · Earlier conditional-read results did not prove an atomic update guard; live workflow writes remain disabled.
